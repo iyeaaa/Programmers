@@ -30,8 +30,6 @@ for _ in 0..<t {
             return false
         }
 
-        graph[x][y] = 0
-
         while !queue.isEmpty {
             let temp = queue.removeFirst()
             for i in 0...3 {
@@ -54,10 +52,3 @@ for _ in 0..<t {
         return true
     }   // bfs
 }
-
-
-
-
-
-
-
