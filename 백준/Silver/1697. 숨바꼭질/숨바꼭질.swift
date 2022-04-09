@@ -1,9 +1,7 @@
 let local = readLine()!.split{$0==" "}.map{Int(String($0))!}
 var queue = [local[0]]
-var count = [Int](repeating: 0, count: 100001)
+var count = [Int](repeating: -1, count: 100001)
 count[local[0]] = 0
-var visited = [Bool](repeating: false, count: 100001)
-visited[local[0]] = true
 
 print(bfs())
 
@@ -20,24 +18,21 @@ func bfs() -> Int {
         let n2 = temp + 1
         let n3 = temp * 2
 
-        if n1 >= 0 && !visited[n1] {
+        if n1 >= 0 && count[n1] == -1 {
             queue.append(n1)
             count[n1] = count[temp] + 1
-            visited[n1] = true
             second = count[n1]
         }
 
-        if n2 <= 100000 && !visited[n2] {
+        if n2 <= 100000 && count[n2] == -1 {
             queue.append(n2)
             count[n2] = count[temp] + 1
-            visited[n2] = true
             second = count[n2]
         }
 
-        if n3 <= 100000 && !visited[n3] {
+        if n3 <= 100000 && count[n3] == -1 {
             queue.append(n3)
             count[n3] = count[temp] + 1
-            visited[n3] = true
             second = count[n3]
         }
 
