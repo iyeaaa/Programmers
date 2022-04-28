@@ -1,64 +1,53 @@
 let n = Int(readLine()!)!
-var graph = [[Int]](repeating: [Int](repeating: 0, count: n), count: n)
-let dx = [0, -1, 0, 1]
-let dy = [-1, 0, 1, 0]
+var node = [[Int]](repeating: [Int](repeating: 0, count: n), count: n)
 
-for i in 0..<n {
-    let temp = Array(readLine()!)
-    for j in 0..<n {
-        graph[i][j] = Int(String(temp[j]))!
+mapConstructor()
+printResult()
+
+func mapConstructor() {
+    for i in 0..<n {
+        let temp = Array(readLine()!)
+        for j in 0..<n {
+            node[i][j] = Int(String(temp[j]))!
+        }
     }
 }
 
-func bfs(_ x: Int,_ y: Int) -> Int {
-    var count = 1
+func printResult() {
+    var result = [Int]()
+    for i in 0..<n {
+        for j in 0..<n {
+            if node[i][j] == 1 {
+                result.append(bfs(i, j))
+            }
+        }
+    }
+    var re = "\(result.count)\n"
+    result.sort()
+    for i in result {
+        re += "\(i)\n"
+    }
+    print(re)
+}
+
+func bfs(_ x: Int, _ y: Int) -> Int {
+    let dx = [-1, 0, 1, 0]
+    let dy = [0, -1, 0, 1]
+    node[x][y] = 0
+    var index = 0
     var queue = [[x, y]]
-
-    if graph[x][y] == 0 {
-        return -1
-    }
-
-    graph[x][y] = 0
-
-    while !queue.isEmpty {
-        let temp = queue.removeFirst()
+    while index < queue.count {
         for i in 0...3 {
-            let nx = temp[0] + dx[i]
-            let ny = temp[1] + dy[i]
-
-            if nx < 0 || nx > n-1 || ny < 0 || ny > n-1 {
+            let nx = queue[index][0] + dx[i]
+            let ny = queue[index][1] + dy[i]
+            if nx < 0 || nx > n-1 || ny < 0 || ny > n-1 || node[nx][ny] == 0 {
                 continue
+            } else {
+                queue.append([nx, ny])
+                node[nx][ny] = 0
             }
-
-            if graph[nx][ny] == 0 {
-                continue
-            }
-
-            queue.append([nx, ny])
-            graph[nx][ny] = 0
-            count += 1
         }
+        index += 1
     }
-
-    return count
-}
-
-var result: [Int] = []
-var count = 0
-
-for i in 0..<n {
-    for j in 0..<n {
-        let temp = bfs(i, j)
-        if temp != -1 {
-            count += 1
-            result.append(temp)
-        }
-    }
-}
-
-print(count)
-result.sort()
-
-for i in result {
-    print(i)
+    return queue.count
 }
