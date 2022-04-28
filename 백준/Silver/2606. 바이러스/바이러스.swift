@@ -1,32 +1,30 @@
-let node = Int(readLine()!)!
-let line = Int(readLine()!)!
-var graph = [[Int]](repeating: [], count: node+1)
-var infect = [Bool](repeating: false, count: node+1)
+let n = Int(readLine()!)!
+let c = Int(readLine()!)!
+var node = [[Int]](repeating: [], count: n+1)
+var visited = [Bool](repeating: false, count: n+1)
 
-for _ in 0..<line {
+for _ in 0..<c {
     let temp = readLine()!.split{$0==" "}.map{Int(String($0))!}
-    graph[temp[0]].append(temp[1])
-    graph[temp[1]].append(temp[0])
+    node[temp[0]].append(temp[1])
+    node[temp[1]].append(temp[0])
 }
 
-func bfs(_ start: Int) -> Int{
-    var queue: [Int] = [start]
-    infect[start] = true
-    var result = 0
+print(bfs())
 
-    while !queue.isEmpty {
-        let temp = queue.removeFirst()
-
-        for i in graph[temp] {
-            if !infect[i] {
+func bfs() -> Int {
+    visited[1] = true
+    var queue = [1]
+    var index = 0
+    var n = 1
+    while index < n {
+        for i in node[queue[index]] {
+            if !visited[i] {
                 queue.append(i)
-                infect[i] = true
-                result += 1
+                n += 1
+                visited[i] = true
             }
         }
+        index += 1
     }
-
-    return result
+    return n-1
 }
-
-print(bfs(1))
