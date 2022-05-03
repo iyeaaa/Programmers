@@ -5,15 +5,11 @@ let cards = readLine()!.split{$0==" "}.map{Int(String($0))!}
 var max = 0
 
 for i in 0..<cards.count {
-    for j in 0..<cards.count {
-        for k in 0..<cards.count {
-            if i == j || i == k || j == k {
-                continue
-            } else {
-                let sum = cards[i]+cards[j]+cards[k]
-                if sum <= m && sum > max {
-                    max = sum
-                }
+    for j in i+1..<cards.count {
+        for k in j+1..<cards.count {
+            let sum = cards[i]+cards[j]+cards[k]
+            if sum <= m && sum > max {
+                max = sum
             }
         }
     }
