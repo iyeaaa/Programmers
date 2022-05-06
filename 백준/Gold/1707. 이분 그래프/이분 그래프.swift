@@ -15,7 +15,7 @@ first: for _ in 0..<Case {
 
     for i in 1...v {
         if visit[i] == 0 {
-            if bfs(start: i) == "NO" {
+            if bfs(start: i, graph: &graph, visit: &visit) == "NO" {
                 print("NO")
                 continue first
             }
@@ -23,33 +23,33 @@ first: for _ in 0..<Case {
     }
 
     print("YES")
+}
 
-    func bfs(start: Int) -> String {
-        var queue = [start]
-        var index = 0
-        visit[start] = RED
-        while index < queue.count {
-            let cur = queue[index]
-            for i in graph[cur] {
-                if visit[i] == NON {
-                    if visit[cur] == RED {
-                        visit[i] = BLUE
-                    } else {
-                        visit[i] = RED
-                    }
-                    queue.append(i)
-                } else if visit[i] == BLUE {
-                    if visit[cur] == BLUE {
-                        return "NO"
-                    }
-                } else {    // visit[i] == RED
-                    if visit[cur] == RED {
-                        return "NO"
-                    }
+func bfs(start: Int, graph: inout [[Int]], visit: inout [Int]) -> String {
+    var queue = [start]
+    var index = 0
+    visit[start] = RED
+    while index < queue.count {
+        let cur = queue[index]
+        for i in graph[cur] {
+            if visit[i] == NON {
+                if visit[cur] == RED {
+                    visit[i] = BLUE
+                } else {
+                    visit[i] = RED
+                }
+                queue.append(i)
+            } else if visit[i] == BLUE {
+                if visit[cur] == BLUE {
+                    return "NO"
+                }
+            } else {    // visit[i] == RED
+                if visit[cur] == RED {
+                    return "NO"
                 }
             }
-            index += 1
         }
-        return "YES"
+        index += 1
     }
+    return "YES"
 }
