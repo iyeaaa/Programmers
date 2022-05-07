@@ -33,14 +33,12 @@ func bfs(_ i: Int, _ j: Int, _ height: Int) {
         let (x, y) = (queue[index][0], queue[index][1])
         for i in [[-1, 0], [0, -1], [1, 0], [0, 1]] {
             let (nx, ny) = (x + i[0], y + i[1])
-            if !(0..<n).contains(nx) || !(0..<n).contains(ny) {
-                continue
+            if (0..<n).contains(nx) && (0..<n).contains(ny) {
+                if !visit[nx][ny] && graph[nx][ny] > height {
+                    queue.append([nx, ny])
+                    visit[nx][ny] = true
+                }
             }
-            if graph[nx][ny] <= height || visit[nx][ny] {
-                continue
-            }
-            queue.append([nx, ny])
-            visit[nx][ny] = true
         }
         index += 1
     }
