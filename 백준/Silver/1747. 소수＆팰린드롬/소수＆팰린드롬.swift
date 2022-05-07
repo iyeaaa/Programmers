@@ -20,7 +20,7 @@ func isPrime(_ n: Int) -> Bool {
     if n == 1 {
         return false
     }
-    for i in stride(from: 2, through: n-1, by: 1) {
+    for i in stride(from: 2, through: Int(sqrt(Double(n))), by: 1) {
         if n % i == 0 {
             return false
         }
