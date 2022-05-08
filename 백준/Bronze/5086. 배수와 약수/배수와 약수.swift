@@ -8,23 +8,16 @@ while true {
     }
 
     if n > m {
-        print(isMultiple(n, m))
+        if n % m == 0 {
+            print("multiple")
+        } else {
+            print("neither")
+        }
     } else {
-        print(isFactor(n, m))
+        if m % n == 0 {
+            print("factor")
+        } else {
+            print("neither")
+        }
     }
-}
-
-
-func isFactor(_ min: Int, _ max: Int) -> String {
-    if max % min == 0 {
-        return "factor"
-    }
-    return "neither"
-}
-
-func isMultiple(_ max: Int, _ min: Int) -> String {
-    if max % min == 0 {
-        return "multiple"
-    }
-    return "neither"
 }
