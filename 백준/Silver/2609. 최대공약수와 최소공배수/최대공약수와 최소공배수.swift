@@ -1,26 +1,18 @@
 let input = readLine()!.split{$0==" "}.map{Int(String($0))!}
-var (n, m) = (input[0], input[1])
+let (n, m) = (input.max()!, input.min()!)
+print(gcd(n, m))
+print(lcm(n, m))
 
-if n < m {
-    swap(&n, &m)
-}
-
-var gcd = 1
-var lcm = n
-
-for i in stride(from: 1, through: m, by: 1) {
-    if n % i == 0 && m % i == 0 {
-        gcd = i
+func gcd(_ t_a: Int, _ t_b: Int) -> Int {
+    var (a, b, c) = (t_a, t_b, t_a%t_b)
+    while c != 0 {
+        a = b
+        b = c
+        c = a % b
     }
+    return b
 }
 
-while true {
-    if lcm % n == 0 && lcm % m == 0 {
-        break
-    } else {
-        lcm += 1
-    }
+func lcm(_ a: Int, _ b: Int) -> Int {
+    return (a * b)/gcd(a, b)
 }
-
-print(gcd)
-print(lcm)
