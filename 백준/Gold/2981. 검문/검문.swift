@@ -52,7 +52,6 @@ let file = FileIO()
 
 let n = file.readInt()
 var array = [Int]()
-var result = ""
 
 for _ in 0..<n {
     array.append(file.readInt())
@@ -65,13 +64,17 @@ for i in 2..<array.count {
     first = gcd(first, array[i]-array[i-1])
 }
 
-for i in stride(from: 2, through: first/2, by: 1) {
+var result = [first]
+for i in stride(from: 2, through: Int(sqrt(Double(first))), by: 1) {
     if first % i == 0 {
-        result += "\(i) "
+        result.append(i)
+        if i != first/i {
+            result.append(first/i)
+        }
     }
 }
 
-print(result + "\(first)")
+print(result.sorted().map{String($0)}.joined(separator: " "))
 
 func gcd(_ ta: Int, _ tb: Int) -> Int {
     var (a, b, r) = (ta, tb, ta%tb)
