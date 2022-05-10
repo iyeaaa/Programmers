@@ -5,7 +5,7 @@ while Case > 0 {
     let n = Int(readLine()!)!
     for _ in 0..<n {
         let input = readLine()!.split{$0==" "}.map{String($0)}
-        if dict.keys.contains(input[1]) {
+        if dict[input[1]] != nil {
             dict[input[1]]! += 1
         } else {
             dict[input[1]] = 2
