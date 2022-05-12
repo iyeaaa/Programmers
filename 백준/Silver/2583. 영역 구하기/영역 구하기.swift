@@ -5,10 +5,8 @@ var visit = [[Bool]](repeating: [Bool](repeating: false, count: m), count: n)
 
 for _ in 0..<k {
     let input = readLine()!.split{$0==" "}.map{Int(String($0))!}
-    let (start_x, start_y) = (n-1-input[1], input[0])
-    let (end_x, end_y) = (n-input[3], input[2]-1)
-    for i in end_x...start_x {
-        for j in start_y...end_y {
+    for i in input[1]..<input[3] {
+        for j in input[0]..<input[2] {
             visit[i][j] = true
         }
     }
@@ -50,14 +48,3 @@ func bfs(_ i: Int, _ j: Int) -> Int {
     return count
 }
 
-/*
- (0, 2) - (4, 4)
- (2, 0) - (4, 4)
- (2, 0) - (3, 3)
- (4-2, 0) - (4-3, 3)
- (2, 0) - (1, 3)
-
- 1. x <-> y
- 2. end 좌표 x-1, y-1
- 3. n-1-start_x, n-1-end_x
- */
