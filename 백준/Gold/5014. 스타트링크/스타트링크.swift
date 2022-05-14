@@ -10,16 +10,16 @@ func bfs(start: Int, target: Int, top: Int, u: Int, d: Int) -> Int {
     }
     var index = 0
     var queue = [start]
-    var visit = [Int:Int]()
+    var visit = [Int](repeating: -1, count: 1_000_001)
     visit[start] = 0
     while index < queue.count {
         let cur = queue[index]
         for i in [cur+u, cur-d] {
-            if i >= 1 && i <= top && visit[i] == nil {
+            if i >= 1 && i <= top && visit[i] == -1 {
                 queue.append(i)
-                visit[i] = visit[cur]! + 1
+                visit[i] = visit[cur] + 1
                 if i == target {
-                    return visit[i]!
+                    return visit[i]
                 }
             }
         }
