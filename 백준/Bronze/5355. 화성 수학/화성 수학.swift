@@ -3,7 +3,7 @@ import Foundation
 let CASE = Int(readLine()!)!
 
 for _ in 0..<CASE {
-    var input = readLine()!.split{$0==" "}.map{String($0)}
+    let input = readLine()!.split{$0==" "}.map{String($0)}
     var num = Double(input[0])!
     for i in 1..<input.count {
         if input[i] == "@" {
