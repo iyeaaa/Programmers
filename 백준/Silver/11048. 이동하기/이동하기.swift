@@ -24,7 +24,10 @@ func dfs(_ x:Int, _ y: Int) -> Int {
     for i in direction {
         let (nx, ny) = (x+i[0], y+i[1])
         if (1...n).contains(nx) && (1...m).contains(ny) {
-            dp[x][y] = max(dp[x][y], dfs(nx, ny))
+            let temp = dfs(nx, ny)
+            if dp[x][y] < temp {
+                dp[x][y] = temp
+            }
         }
     }
     dp[x][y] += graph[x][y]
