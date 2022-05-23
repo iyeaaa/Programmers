@@ -7,34 +7,24 @@ solveProblem()
 
 func solveProblem() {
     inputGraph()
-    findLand()
     findMaxDist()
 }
 
 func findMaxDist() {
-    var max = 0
-    for i in land {
-        let temp = bfs(i[0], i[1])
-        if max < temp {
-            max = temp
+    var answer = 0
+    for i in 0..<n {
+        for j in 0..<m {
+            if graph[i][j] == "L" {
+                answer = max(answer, bfs(i, j))
+            }
         }
     }
-    print(max)
+    print(answer)
 }
 
 func inputGraph() {
     for _ in 0..<n {
-        graph.append(Array(readLine()!))
-    }
-}
-
-func findLand() {
-    for i in 0..<n {
-        for j in 0..<m {
-            if graph[i][j] == "L" {
-                land.append([i, j])
-            }
-        }
+        graph += [Array(readLine()!)]
     }
 }
 
