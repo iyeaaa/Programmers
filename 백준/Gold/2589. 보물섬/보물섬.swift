@@ -1,7 +1,6 @@
 let input = readLine()!.split{$0==" "}.map{Int(String($0))!}
 let (n, m) = (input[0], input[1])
 var graph = [[Character]]()
-var land = [[Int]]()
 
 solveProblem()
 
@@ -38,7 +37,7 @@ func bfs(_ i: Int, _ j: Int) -> Int {
         let (x, y) = (queue[index][0], queue[index][1])
         for i in [[-1, 0], [0, -1], [1, 0], [0, 1]] {
             let (nx, ny) = (x+i[0], y+i[1])
-            if (0..<n).contains(nx) && (0..<m).contains(ny) {
+            if 0 <= nx && nx < n && 0 <= ny && ny < m {
                 if graph[nx][ny] == "L" && visit[nx][ny] == -1 {
                     queue.append([nx, ny])
                     visit[nx][ny] = visit[x][y] + 1
