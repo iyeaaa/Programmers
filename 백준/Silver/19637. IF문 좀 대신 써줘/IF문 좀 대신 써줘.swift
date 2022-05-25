@@ -23,10 +23,8 @@ func binary_Search(u: Int) -> String {
         let mid = (start + end) / 2
         if u > rank[mid].power {
             start = mid + 1
-        } else if u < rank[mid].power {
-            end = mid - 1
         } else {
-            return rank[mid].rank
+            end = mid - 1
         }
     }
     return rank[start].rank
