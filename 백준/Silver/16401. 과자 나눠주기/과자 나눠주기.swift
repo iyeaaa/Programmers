@@ -9,7 +9,7 @@ func isPossible(_ n: Int) -> Bool {
 }
 
 func binary_Search() -> Int {   // 내림차순!
-    var (start, end) = (1, snack.max()!)
+    var (start, end) = (1, 1_000_000_000)
     while start <= end {
         let mid = (start + end) / 2
         if isPossible(mid) {
