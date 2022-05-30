@@ -7,7 +7,6 @@ for _ in 0..<n {
     graph.append(readLine()!.split{$0==" "}.map{Int(String($0))!})
 }
 
-var preCheese = Set<[Int]>()
 var preCheeseEA = cheeseEACount()
 
 if cheeseEACount() == 0 {
@@ -53,7 +52,6 @@ func plusHour() {
         }
         index += 1
     }
-    preCheese = newPreCheese
 }
 
 func cheeseEACount() -> Int {
