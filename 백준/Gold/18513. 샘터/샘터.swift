@@ -8,11 +8,8 @@ var visit = [Int:Int]()
 var count = 0
 for l in local { visit[l] = 0 }
 
-first: while index < queue.count {
+f: while index < queue.count {
     let cur = queue[index]
-    if count == k {
-        break first
-    }
     for i in [-1, 1] {
         let next = cur + i
         if visit[next] == nil {
@@ -20,11 +17,10 @@ first: while index < queue.count {
             visit[next] = visit[cur]! + 1
             count += 1
             if count == k {
-                break first
+                print(visit.values.reduce(0) {$0 + $1})
+                break f
             }
         }
     }
     index += 1
 }
-
-print(visit.values.reduce(0) {$0 + $1})
