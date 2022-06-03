@@ -1,38 +1,28 @@
-import Foundation
+let pro = (readLine()!).split(separator: " ").map{ Int($0)!} //테스트
 
-var buffer = Array(FileHandle.standardInput.readDataToEndOfFile()), byteIdx = 0
-buffer.append(0)
-@inline(__always) func readByte() -> UInt8 {
-    defer { byteIdx += 1 }
-    return buffer[byteIdx]
-}
-@inline(__always) func readInt() -> Int {
-    var number = 0, byte = readByte()
-    while byte == 10 || byte == 32 {
-        byte = readByte()
+func bag(_ n: [Int]){
+    
+    
+    let (num, maxW) = (n[0] , n[1])
+    
+    
+    var value = [0]
+    var weight = [0]
+    for _ in 0..<num{
+        let second = (readLine()!).split(separator: " ").map{ Int($0)!}
+        let (w,v) = (second[0],second[1])
+        weight.append(w)
+        value.append(v)
     }
-    while 48...57 ~= byte {
-        number = number * 10 + Int(byte-48)
-        byte = readByte()
-    }
-    return number
-}
+    var dp =  Array(repeating: 0, count: maxW+1)
 
-let (n, k) = (readInt(), readInt())
-var cost = [0], weight = [0]
-var dp = Array(repeating: 0, count: k+1)
-
-for _ in 0..<n {
-    weight.append(readInt())
-    cost.append(readInt())
-}
-
-for i in stride(from: 1, through: n, by: 1) {
-    for j in stride(from: k, to: 0, by: -1) {
-        if j >= weight[i] {
-            dp[j] = max(dp[j], dp[j-weight[i]] + cost[i])
+    for i in 1...num {
+        for j in stride(from: maxW, to: 0, by: -1) {
+            if j >= weight[i] {
+                dp[j] = max(dp[j], dp[j-weight[i]] + value[i])
+            }
         }
     }
+    print(dp[maxW])
 }
-
-print(dp[k])
+bag(pro)
