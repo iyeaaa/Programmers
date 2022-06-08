@@ -17,8 +17,8 @@ for _ in 1...readInt() {
     var coin = [Int](); for _ in 0..<coinEA { coin.append(readInt()) }
     let money = readInt()
     var dp = Array(repeating: 0, count: 10001)
+    dp[0] = 1
     for c in coin {
-        dp[c] += 1
         for m in stride(from: c, through: money, by: 1) {
             dp[m] = dp[m] + dp[m-c]
         }
