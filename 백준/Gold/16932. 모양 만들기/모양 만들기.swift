@@ -15,16 +15,16 @@ var buffer = Array(FileHandle.standardInput.readDataToEndOfFile()), idx = 0
 let (n, m) = (readInt(), readInt())
 var graph = Array(repeating: Array(repeating: [0, 0], count: m), count: n)
 var visit = Array(repeating: Array(repeating: false, count: m), count: n)
-var zero = Set<[Int]>(), one = Set<[Int]>()
+var zero = [[Int]](), one = [[Int]]()
 var dict: [Int:Int] = [0: 0]
 let direction = [[-1, 0], [0, -1], [1, 0], [0, 1]]
 for i in 0..<n {
     for j in 0..<m {
         graph[i][j][0] = readInt()
         if graph[i][j][0] == 0 {
-            zero.insert([i, j])
+            zero.append([i, j])
         } else {
-            one.insert([i, j])
+            one.append([i, j])
         }
     }
 }
