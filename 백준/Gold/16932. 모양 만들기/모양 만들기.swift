@@ -18,8 +18,8 @@ var visit = Array(repeating: Array(repeating: false, count: m), count: n)
 var zero = Set<[Int]>(), one = Set<[Int]>()
 var dict: [Int:Int] = [0: 0]
 let direction = [[-1, 0], [0, -1], [1, 0], [0, 1]]
-(0..<n).forEach { i in
-    (0..<m).forEach { j in
+for i in 0..<n {
+    for j in 0..<m {
         graph[i][j][0] = readInt()
         if graph[i][j][0] == 0 {
             zero.insert([i, j])
