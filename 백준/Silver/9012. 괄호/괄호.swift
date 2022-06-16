@@ -1,31 +1,18 @@
-import Foundation
+for _ in 0..<Int(readLine()!)! {
+    let vps = readLine()!
+    var array = [Int]()
 
-let n = Int(readLine()!)!
-var result = ""
-
-first : for _ in 1...n {
-    var count = 0
-    var str = readLine()!
-
-    for i in str {
-        if String(i) == "(" {
-            count += 1
-        }
-        else {
-            count -= 1
-        }
-
-        if count < 0 {
-            result += "NO\n"
-            continue first
+    for v in vps {
+        if v == "(" {
+            array.append(0)
+        } else {
+            if array.isEmpty {
+                array.append(0)
+                break
+            }
+            let _ = array.popLast()
         }
     }
 
-    if count != 0 {
-        result += "NO\n"
-    } else {
-        result += "YES\n"
-    }
+    print(array.isEmpty ? "YES" : "NO")
 }
-
-print(result)
