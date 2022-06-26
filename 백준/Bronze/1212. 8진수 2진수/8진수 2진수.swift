@@ -1,12 +1,16 @@
-import Foundation
+let oct = ["000", "001", "010", "011", "100", "101", "110", "111"]
+var result = ""
 
-var input = readLine()!.map { String($0) }
-
-var binaryArray: [String] = [String(Int(input.first!)!, radix: 2)]
-for number in input[1...] {
-    let binaryNumber = String(Int(number)!, radix: 2)
-    let string = String(format: "%03d", Int(binaryNumber)!)
-    binaryArray.append(string)
+for i in readLine()!.map{Int(String($0))!} {
+    result += oct[i]
 }
 
-print(binaryArray.joined())
+while result.first == "0" {
+    result.removeFirst()
+}
+
+if result.isEmpty {
+    result = "0"
+}
+
+print(result)
