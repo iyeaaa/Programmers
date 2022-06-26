@@ -5,7 +5,7 @@ var dict = [0: 0];
 
 for i in 1..<n {
     while !stack.isEmpty && list[stack.last!] < list[i] {
-        let _ = stack.popLast()
+        let _ = stack.removeLast()
     }
     if !stack.isEmpty {
         dict[i] = stack.last!+1
