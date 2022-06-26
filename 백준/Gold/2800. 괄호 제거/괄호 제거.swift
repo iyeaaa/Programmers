@@ -8,8 +8,7 @@ result.sorted().forEach{ print($0) }
 func dfs(_ strn: [String], _ digit: Int) {
     if digit == nmbrPairs { return }
     let strn1 = convertWhiteSpace(strn, pairs[digit])
-    let strn2 = removalWhiteSpaceToString(strn1)
-    result.insert(strn2)
+    result.insert(removalWhiteSpaceToString(strn1))
     dfs(strn1, digit+1)
     dfs(strn, digit+1)
 }
