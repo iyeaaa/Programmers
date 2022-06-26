@@ -1,15 +1,15 @@
 var strn = Array(readLine()!).map{String($0)}
 var pairs = crtPairArray(strn); let nmbrPairs = pairs.count
-var dict = [String:Int]()
+var result = Set<String>()
 
 dfs(strn, 0)
-dict.map{$0.key}.sorted().forEach{ print($0) }
+result.sorted().forEach{ print($0) }
 
 func dfs(_ strn: [String], _ digit: Int) {
     if digit == nmbrPairs { return }
     let strn1 = convertWhiteSpace(strn, pairs[digit])
     let strn2 = removalWhiteSpaceToString(strn1)
-    dict[strn2] = 1
+    result.insert(strn2)
     dfs(strn1, digit+1)
     dfs(strn, digit+1)
 }
