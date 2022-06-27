@@ -1,22 +1,19 @@
-_ = readLine()
-let money = readLine()!.split{$0==" "}.map{Int(String($0))!}
-let my_money = Int(readLine()!)!
+func solve() {
+    func isPsb(_ mny: Int) -> Bool { bdg.reduce(0){$0 + ($1 >= mny ? mny : $1)} <= max }
 
-print(binary_Search(list: money, start: 0, end: money.max()!, target: my_money))
-
-func binary_Search(list: [Int], start: Int, end: Int, target: Int) -> Int {
-    var start = start
-    var end = end
-    var result = 0
-    while start <= end {
-        let mid = (start+end) / 2
-        let mid_sum = list.reduce(0) { $0 + (($1 > mid) ? mid : $1) }
-        if target < mid_sum {
-            end = mid - 1
+    let _ = Int(readLine()!)!
+    let bdg = readLine()!.split{$0==" "}.map{Int(String($0))!}
+    let max = Int(readLine()!)!
+    var (lf, ryt) = (0, bdg.max()!)
+    while lf <= ryt {
+        let mid = (lf + ryt) / 2
+        if isPsb(mid) {
+            lf = mid + 1
         } else {
-            start = mid + 1
-            result = mid
+            ryt = mid - 1
         }
     }
-    return result
+    print(ryt)
 }
+
+solve()
