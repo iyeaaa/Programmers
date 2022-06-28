@@ -3,9 +3,10 @@ func solve() {
 
     let input = readLine()!.split{$0==" "}.map{Int(String($0))!}
     let (n, m) = (input[0], input[1])
-    var T = [Int](); for _ in 0..<n { T.append(Int(readLine()!)!) }; T.sort()
+    var T = [Int](), max = 0;
+    for i in 0..<n { T.append(Int(readLine()!)!); if max < T[i] { max = T[i] } }
 
-    var (lf, ryt) = (0, T[n-1]*m)
+    var (lf, ryt) = (0, max*m)
     while lf <= ryt {
         let mid = (lf + ryt) / 2
         if isPsb(ckT: mid) {
