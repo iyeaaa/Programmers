@@ -1,3 +1,2 @@
 # BOJ
-iyeaaa's BaekJoon \n
-iyeaaa's Programmers
+iyeaaa's BaekJoon and Programmers
