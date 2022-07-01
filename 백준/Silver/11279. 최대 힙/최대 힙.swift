@@ -22,12 +22,8 @@ struct Heap<T: Comparable> {
     }
 
     mutating func insert(_ data: T) {
-        if heap.count == 0 {
-            heap.append(data)
-            heap.append(data)
-            return
-        }
         heap.append(data)
+        if heap.count == 1 { heap.append(data); return }
 
         func isMoveUp(_ insertIndex: Int) -> Bool {
             if insertIndex <= 1 { return false }
@@ -60,7 +56,7 @@ struct Heap<T: Comparable> {
             if rightChildIndex >= heap.count {
                 return heap[leftChildIndex] > heap[poppedIndex] ? .left : .none
             }
-            if heap[leftChildIndex] < heap[poppedIndex] && heap[rightChildIndex] < heap[poppedIndex] {
+            if heap[leftChildIndex] <= heap[poppedIndex] && heap[rightChildIndex] <= heap[poppedIndex] {
                 return .none
             }
             if heap[leftChildIndex] > heap[poppedIndex] && heap[rightChildIndex] > heap[poppedIndex] {
