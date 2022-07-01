@@ -21,10 +21,6 @@ struct Heap<T: Comparable> {
         heap.append(data)
     }
 
-    var isEmpty: Bool {
-        heap.count <= 1
-    }
-
     mutating func insert(_ data: T) {
         if heap.count == 0 {
             heap.append(data)
@@ -46,7 +42,6 @@ struct Heap<T: Comparable> {
             insertIndex = parentIndex
         }
     }
-
 
     enum moveDownStatus { case none, left, right }
     mutating func pop() -> T? {
@@ -98,7 +93,7 @@ var heap = Heap<Int>()
 for _ in 0..<readInt() {
     let input = readInt()
     if input == 0 {
-        result += heap.isEmpty ? "0\n" : "\(heap.pop()!)\n"
+        result += "\(heap.pop() ?? 0)\n"
     } else {
         heap.insert(input)
     }
