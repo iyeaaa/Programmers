@@ -83,6 +83,7 @@ struct MaxHeap<T: Comparable> {
     }
 
     enum Direction { case none, lf, ryt }
+    @discardableResult
     mutating func pop() -> T? {
         func haveToDown(_ popIdx: Int) -> Direction {
             let lfChlIdx = popIdx*2
@@ -153,6 +154,7 @@ struct MinHeap<T: Comparable> {
     }
 
     enum Direction { case none, lf, ryt }
+    @discardableResult
     mutating func pop() -> T? {
         func haveToDown(_ popIdx: Int) -> Direction {
             let lfChlIdx = popIdx*2
@@ -194,7 +196,6 @@ struct MinHeap<T: Comparable> {
 
 
 let file = FileIO()
-var solvedProblem = [[Int]: Bool]()
 var level = [Int: Int]()
 var maxHeap = MaxHeap<Problem>()
 var minHeap = MinHeap<Problem>()
@@ -204,7 +205,6 @@ func inputProblem() {
     level[p] = l
     maxHeap.insert(Problem(p: p, l: l))
     minHeap.insert(Problem(p: p, l: l))
-    solvedProblem[[p, l]] = false
 }
 
 for _ in 0..<file.readInt() {
@@ -216,21 +216,20 @@ for _ in 0..<file.readInt() {
     let command = file.readString()
     if command == "recommend" {
         if file.readInt() == 1 {
-            while solvedProblem[[maxHeap.first!.p, maxHeap.first!.l]]! {
-                let _ = maxHeap.pop()
+            while maxHeap.first!.l != level[maxHeap.first!.p] {
+                maxHeap.pop()
             }
             result += "\(maxHeap.first!.p)\n"
         } else {
-            while solvedProblem[[minHeap.first!.p, minHeap.first!.l]]! {
-                let _ = minHeap.pop()
+            while minHeap.first!.l != level[minHeap.first!.p] {
+                minHeap.pop()
             }
             result += "\(minHeap.first!.p)\n"
         }
     } else if command == "add" {
         inputProblem()
     } else if command == "solved" {
-        let prbm = file.readInt()
-        solvedProblem[[prbm, level[prbm]!]] = true
+        level[file.readInt()] = 0
     }
 }
 
