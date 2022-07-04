@@ -10,8 +10,8 @@ func solution(_ id_list:[String], _ report:[String], _ k:Int) -> [Int] {
         rptedCount[rpt[1], default: 0] += 1
     }
 
-    return id_list.map { id in
-        report_ID[id, default: []].reduce(0) {
+    return id_list.map {
+        report_ID[$0, default: []].reduce(0) {
             $0 + (rptedCount[$1, default: 0] >= k ? 1 : 0)
         }
     }
