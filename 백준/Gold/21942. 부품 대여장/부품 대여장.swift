@@ -1,11 +1,11 @@
 import Foundation
 
-final class FileIO {
+final class IO {
     private let buffer:[UInt8]
     private var index: Int = 0
 
     init(fileHandle: FileHandle = FileHandle.standardInput) {
-        
+
         buffer = Array(try! fileHandle.readToEnd()!)+[UInt8(0)] // 인덱스 범위 넘어가는 것 방지
     }
 
@@ -21,7 +21,7 @@ final class FileIO {
         var isPositive = true
 
         while now == 10
-                || now == 32 { now = read() } // 공백과 줄바꿈 무시
+                      || now == 32 { now = read() } // 공백과 줄바꿈 무시
         if now == 45 { isPositive.toggle(); now = read() } // 음수 처리
         while now >= 48, now <= 57 {
             sum = sum * 10 + Int(now-48)
@@ -58,76 +58,50 @@ final class FileIO {
     }
 }
 
-let monthList = [0,31,28,31,30,31,30,31,31,30,31,30,31]
+let io = IO()
 
-//대여가능기간을 분으로 convert하는 함수
-func getRentalMinute(str: String) -> Int {
-    let strList = str.components(separatedBy: ["/",":"]).map{Int($0)!}
-    let day = strList[0], hour = strList[1], minute = strList[2]
-    return day * 24 * 60 + hour * 60 + minute
-}
+let (N, L, F) = (io.readInt(), io.readString(), io.readInt())
+let LList = L.components(separatedBy: ["/", ":"]).map{Int($0)!}
+let L_minutes = LList[0]*24*60 + LList[1]*60 + LList[2]
 
-//날짜를 분으로 convert하는 함수
-func convertDateToMinutes(date: String, time: String) -> Int {
-    let timeList = time.components(separatedBy: ":").map{Int($0)!}
-    let hour = timeList[0], minute = timeList[1]
-
-    let dateList = date.components(separatedBy: "-").dropFirst().map{Int($0)!}
-    let month = dateList[0], day = dateList[1]
-    
-    var daySum = 0
-    for i in 1..<month {
-        daySum += monthList[i]
-    }
-    daySum += day
-    return daySum * 24 * 60 + hour * 60 + minute
-}
-
-//key = 부품이름 닉네임, value = 대여날짜
-var rentalList: [String: Int] = [:]
-//key = 닉네임, value = 벌금
-var personInfo: [String: Int] = [:]
-
-//입력
-let fIO = FileIO()
-let N = fIO.readInt()
-let L = getRentalMinute(str: fIO.readString())
-let F = fIO.readInt()
+var dict = [String: Int]()
+var nameToCost = [String: Int]()
 
 for _ in 0..<N {
-    let date = fIO.readString()
-    let time = fIO.readString()
-    let item = fIO.readString()
-    let name = fIO.readString()
-    
-    let convertedMinutes = convertDateToMinutes(date: date, time: time)
-    let key = item + " " + name
-    
-    if let previousMinutes = rentalList[key] {
-        let borrowMinutes = convertedMinutes - previousMinutes
-        
-        //늦었으면 벌금내야함
-        if borrowMinutes > L {
-            let penalty = (borrowMinutes - L) * F
-            if personInfo[name] == nil {
-                personInfo[name] = 0
-            }
-            personInfo[name]! += penalty
-        }
-        //반납했으니 랜탈리스트에서 지워줌
-        rentalList[key] = nil
-    }
-    //전에 빌린적 없으면 대출
-    else {
-        rentalList[key] = convertedMinutes
-    }
-}
-//벌금 낼 사람이 아무도 없으면 -1 출력
-if personInfo.isEmpty { print(-1) }
+    let ymd = io.readString()
+    let hm = io.readString()
+    let object = io.readString()
+    let name = io.readString()
+    let key = name + " " + object
+    let cvtedMnt = cvtToMinutes(ymd, hm)
 
-//사전순으로 정렬해서 출력
-var ans = ""
-for (key, value) in personInfo.sorted(by: {$0.key < $1.key}) {
-    ans.write("\(key) \(value)\n")
+    if let preMnt = dict[key] {
+        let differ = cvtedMnt - preMnt
+        if differ > L_minutes {
+            nameToCost[name, default: 0] += (differ - L_minutes)*F
+        }
+        dict[key] = nil
+    } else {
+        dict[key] = cvtedMnt
+    }
 }
-print(ans.dropLast())
+
+if nameToCost.isEmpty { print(-1) }
+else {
+    var answer = ""
+    for (k, v) in nameToCost.sorted(by: {$0.key < $1.key}) {
+        answer += "\(k) \(v)\n"
+    }
+    print(answer)
+}
+
+func cvtToMinutes(_ md: String, _ hm: String) -> Int {
+    let month = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    let mdList = md.components(separatedBy: "-").map{Int($0)!}
+    let hmList = hm.components(separatedBy: ":").map{Int($0)!}
+    return (month[1..<mdList[1]].reduce(0, +) + mdList[2])*60*24 +
+            hmList[0]*60 + hmList[1]
+}
+
+
+
