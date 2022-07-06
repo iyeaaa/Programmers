@@ -65,7 +65,7 @@ final class IO {
 let io = IO()
 let x = io.readInt()
 var alpabet = Array(repeating: Array(repeating: false, count: 58), count: 58)
-var result = [String](); var count = 0
+var count = 0
 
 for _ in 0..<x {
     let (a, _ , b) = (io.readString(), io.readString(), io.readString())
@@ -73,7 +73,7 @@ for _ in 0..<x {
     if a == b { continue }
     if alpabet[ascA][ascB] { continue }
     alpabet[ascA][ascB] = true
-    count += 1; result += ["\(a) => \(b)"]
+    count += 1;
 }
 
 for k in 0..<58 {
@@ -81,15 +81,24 @@ for k in 0..<58 {
         for j in 0..<58 {
             if i != j && !alpabet[i][j] && alpabet[i][k] && alpabet[k][j]  {
                 count += 1
-                result += ["\(apb(i)) => \(apb(j))"]
                 alpabet[i][j] = true
             }
         }
     }
 }
 
+
+
 print(count)
-print(result.sorted().joined(separator: "\n"))
+var result = ""
+for i in 0..<58 {
+    for j in 0..<58 {
+        if alpabet[i][j] {
+            result += "\(apb(i)) => \(apb(j))\n"
+        }
+    }
+}
+print(result)
 
 func asc(_ strn: String) -> Int {
     Int(Character(strn).unicodeScalars.first!.value) - 65
