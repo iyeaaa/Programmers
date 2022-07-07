@@ -1,35 +1,27 @@
-let n = Int(readLine()!)!
-let W = crtW()
-var visit = [Bool](repeating: false, count: n)
-var minValue = 10000000
-
-for i in 0..<n {
-    visit[i] = true
-    dfs(i, 0, 1, i)
-    visit[i] = false
+let N = Int(readLine()!)!
+var W = [[Int]]()
+var visit = [Bool](repeating: false, count: N)
+for _ in 0..<N {
+    W.append(readLine()!.split{$0==" "}.map{Int(String($0))!})
 }
 
-print(minValue)
-
-func dfs(_ cur: Int, _ sumCost: Int, _ digit: Int, _ start: Int) {
-    if digit == n && W[cur][start] != 0 {
-        minValue = min(minValue, sumCost+W[cur][start])
+var minValue = Int.max
+func dfs(_ start: Int, _ sum: Int, _ digit: Int, _ cur: Int) {
+    if sum >= minValue { return }
+    if digit == N {
+        if W[cur][start] == 0 { return }
+        minValue = min(minValue, sum+W[cur][start])
         return
     }
-    for i in 0..<n {
-        if W[cur][i] != 0 && !visit[i] {
+    for i in 0..<N {
+        if !visit[i] && W[cur][i] != 0 {
             visit[i] = true
-            dfs(i, sumCost+W[cur][i], digit+1, start)
+            dfs(start, sum + W[cur][i], digit+1, i)
             visit[i] = false
         }
     }
 }
 
-
-func crtW() -> [[Int]] {
-    var result = [[Int]]()
-    for _ in 0..<n {
-        result.append(readLine()!.split{$0==" "}.map{Int(String($0))!})
-    }
-    return result
-}
+visit[0] = true
+dfs(0, 0, 1, 0)
+print(minValue)
