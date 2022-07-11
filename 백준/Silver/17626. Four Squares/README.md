@@ -1,10 +1,10 @@
-# [Silver IV] Four Squares - 17626 
+# [Silver III] Four Squares - 17626 
 
 [문제 링크](https://www.acmicpc.net/problem/17626) 
 
 ### 성능 요약
 
-메모리: 69492 KB, 시간: 156 ms
+메모리: 79900 KB, 시간: 152 ms
 
 ### 분류
 
