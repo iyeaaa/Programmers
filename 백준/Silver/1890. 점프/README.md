@@ -1,10 +1,10 @@
-# [Silver II] 점프 - 1890 
+# [Silver I] 점프 - 1890 
 
 [문제 링크](https://www.acmicpc.net/problem/1890) 
 
 ### 성능 요약
 
-메모리: 79516 KB, 시간: 12 ms
+메모리: 69108 KB, 시간: 12 ms
 
 ### 분류
 
