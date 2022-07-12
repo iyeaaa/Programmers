@@ -1,9 +1,19 @@
-import Foundation
+extension Character {
+    var ascii: Int {
+        Int(unicodeScalars.first!.value)
+    }
+}
+
+extension Int {
+    var toChar: Character {
+        Character(UnicodeScalar(65+self)!)
+    }
+}
 
 var apb = [Int](repeating: 0, count: 26)
 
 for s in readLine()! {
-    var n = ascii(s); if n >= 97 { n -= 32 }
+    var n = s.ascii; if n >= 97 { n -= 32 }
     apb[n-65] += 1
 }
 
@@ -14,9 +24,5 @@ let maxList = apb.filter{ maxValue == $0 }
 if maxList.count > 1 {
     print("?")
 } else {
-    print(Character(UnicodeScalar(65+maxValueIndex)!))
-}
-
-func ascii(_ n: Character) -> Int {
-    Int(n.unicodeScalars.first!.value)
+    print(maxValueIndex.toChar)
 }
