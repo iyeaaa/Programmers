@@ -4,6 +4,7 @@ for i in 0..<N {
     graph[i] = readLine()!.split{$0==" "}.map{Int(String($0))!}
 }
 var dp = Array(repeating: Array(repeating: -1, count: N), count: N)
+var count = 0
 
 print(dfs(0, 0))
 
@@ -15,10 +16,9 @@ func dfs(_ y: Int, _ x: Int) -> Int {
         return dp[y][x]
     }
     dp[y][x] = 0
-    for i in [[0, graph[y][x]], [graph[y][x], 0]] {
-        let (ny, nx) = (y+i[0], x+i[1])
-        if (0..<N) ~= ny && (0..<N) ~= nx {
-            dp[y][x] += dfs(ny, nx)
+    for i in [[y+graph[y][x], x], [y, x+graph[y][x]]] {
+        if (0..<N) ~= i[0] && (0..<N) ~= i[1] {
+            dp[y][x] += dfs(i[0], i[1])
         }
     }
     return dp[y][x]
