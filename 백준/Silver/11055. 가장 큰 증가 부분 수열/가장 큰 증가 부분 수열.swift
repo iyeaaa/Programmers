@@ -1,16 +1,13 @@
-let n = Int(readLine()!)!
-let list = readLine()!.split{$0==" "}.map{Int(String($0))!}
-var dp = [Int](repeating: 0, count: n)
-dp[0] = list[0]
+let N = Int(readLine()!)!
+let A = readLine()!.split{$0==" "}.map{Int(String($0))!}
+var dp = A
 
-for i in 1..<list.count {
-    for j in 1...i {
-        if list[i] > list[i-j] {
-            dp[i] = max(dp[i], dp[i-j]+list[i])
+for i in 1..<N {
+    for j in stride(from: i-1, through: 0, by: -1) {
+        if A[j] < A[i] {
+            dp[i] = max(dp[i], dp[j]+A[i])
         }
     }
-    dp[i] = max(list[i], dp[i])
 }
 
 print(dp.max()!)
-
