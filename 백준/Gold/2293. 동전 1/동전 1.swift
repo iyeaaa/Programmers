@@ -8,7 +8,7 @@ var dp = [Int](repeating: 0, count: 10001); dp[0] = 1
 
 for coin in coins {
     for i in stride(from: coin, through: k, by: 1) {
-        dp[i] = (dp[i] + dp[i-coin]) % UPPERLIMIT
+        dp[i] &+= dp[i-coin]
     }
 }
 
