@@ -1,33 +1,24 @@
-import Foundation
+typealias City = (cost: Int, ctmr: Int);
+let INF = 1000*100+1
+let input = readLine()!.split{$0==" "}.map{Int(String($0))!}
+let (C, N) = (input[0], input[1])
+let totalC = C + 100
+var cities = crtCities()
+var dp = [Int](repeating: INF, count: totalC+1); dp[0] = 0
 
-var buffer = Array(FileHandle.standardInput.readDataToEndOfFile()), byteIdx = 0
-@inline(__always) func readByte() -> UInt8 {
-    defer { byteIdx += 1 }
-    return buffer[byteIdx]
-}
-@inline(__always) func readInt() -> Int {
-    var number = 0, byte = readByte()
-    while byte == 10 || byte == 32 { byte = readByte() }
-    while 48...57 ~= byte { number = number * 10 + Int(byte - 48); byte = readByte()}
-    return number
-}
-
-func main() {
-    let (c, n) = (readInt(),readInt())
-    var dp = [Int](repeating: Int.max-100, count: c + 101); dp[0] = 0
-    var price = [0], person = [0]
-    for i in 0..<n {
-        price.append(readInt())
-        person.append(readInt())
+for i in 0..<N {
+    for j in stride(from: cities[i].ctmr, through: totalC, by: 1) {
+        dp[j] = min(dp[j], dp[j-cities[i].ctmr] + cities[i].cost)
     }
-
-    for i in stride(from: 1, through: n, by: 1) {
-        for j in stride(from: person[i], through: c+100, by: 1) {
-            dp[j] = min(dp[j-person[i]] + price[i], dp[j])
-        }
-    }
-
-    print(dp[c...c+100].min()!)
 }
 
-main()
+print(dp[C...totalC].min()!)
+
+func crtCities() -> [City] {
+    var result = [City]()
+    for _ in 0..<N {
+        let input = readLine()!.split{$0==" "}.map{Int(String($0))!}
+        result.append(City(cost: input[0], ctmr: input[1]))
+    }
+    return result
+}
