@@ -1,31 +1,22 @@
 import Foundation
 
 typealias Stone = (s: Int, l: Int)
-
 let N = Int(readLine()!)!
 var stones = crtStones()
 let K = Int(readLine()!)!
-var minEnergy = Int.max
+var dp = [[Int]](repeating: [Int](repeating: Int.max, count: 2), count: N+4)
+dp[1][0] = 0; dp[1][1] = 0
 
-dfs(0, 0, false)
-print(minEnergy)
-
-
-func dfs(_ stt: Int, _ sumE: Int, _ useK: Bool) {
-    if stt == N-1 {
-        minEnergy = min(minEnergy, sumE)
-        return
+for i in 1..<N {
+    let (s, l) = (stones[i-1].s, stones[i-1].l)
+    for j in 0..<2 {
+        dp[i+1][j] = min(dp[i+1][j], dp[i][j]+s)
+        dp[i+2][j] = min(dp[i+2][j], dp[i][j]+l)
     }
-    if stt+1 <= N {
-        dfs(stt+1, sumE+stones[stt].s, useK)
-    }
-    if stt+2 <= N {
-        dfs(stt+2, sumE+stones[stt].l, useK)
-    }
-    if stt+3 <= N && !useK {
-        dfs(stt+3, sumE+K, true)
-    }
+    dp[i+3][1] = min(dp[i+3][1], dp[i][0]+K)
 }
+
+print(dp[N].min()!)
 
 func crtStones() -> [Stone] {
     var result = [Stone]()
