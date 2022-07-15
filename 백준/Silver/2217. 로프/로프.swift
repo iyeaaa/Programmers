@@ -1,20 +1,17 @@
-let n = Int(readLine()!)!
-var rope: [Int] = []
+let N = Int(readLine()!)!
+let ropes = crtRopes()
 
-for _ in 0..<n {
-    rope.append(Int(readLine()!)!)
+var maxValue = 0
+for i in 0..<N {
+    maxValue = max(maxValue, ropes[i]*(i+1))
 }
+print(maxValue)
 
-rope.sort(by: < )
 
-var max = rope[n-1]
-
-if n != 1 {
-    for i in 2...n {
-        let temp = i * rope[n-i]
-        if max < temp {
-            max = temp
-        }
+func crtRopes() -> [Int] {
+    var result = [Int]()
+    for _ in 0..<N {
+        result.append(Int(readLine()!)!)
     }
+    return result.sorted(by: >)
 }
-print(max)
