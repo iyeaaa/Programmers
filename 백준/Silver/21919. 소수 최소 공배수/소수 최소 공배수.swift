@@ -12,6 +12,6 @@ func isPrime(_ x: Int) -> Bool {
 
 
 let N = Int(readLine()!)!
-let primeA = Array(Set(readLine()!.split{$0==" "}.map{Int(String($0))!}.filter{isPrime($0)}))
+let primeA = Set(readLine()!.split{$0==" "}.map{Int(String($0))!}.filter{isPrime($0)})
 
 print(primeA.isEmpty ? -1 : primeA.reduce(1, *))
