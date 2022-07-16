@@ -133,7 +133,7 @@ struct Heap<T: Comparable> {
 
 struct Class: Comparable {
     static func <(lhs: Class, rhs: Class) -> Bool {
-        lhs.T - lhs.S < rhs.T - lhs.S
+        lhs.T < rhs.T
     }
     var S: Int
     var T: Int
