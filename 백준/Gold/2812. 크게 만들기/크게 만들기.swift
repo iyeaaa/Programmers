@@ -98,7 +98,7 @@ struct Deque<T> {
 let io = IO()
 let N = io.readInt()
 var K = io.readInt()
-let strn: [Int] = io.readString().map{$0.wholeNumberValue!}
+let strn: [Int] = io.readString().map{Int(String($0))!}
 var deq = Deque<Int>(strn[0])
 
 for i in 1..<N {
