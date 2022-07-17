@@ -66,7 +66,7 @@ final class IO {
 let io = IO()
 let (N, M) = (io.readInt(), io.readInt())
 let obstacles: [Int] = crtObstacles()
-var isVisit = [Bool](repeating: false, count: 1001)
+var isVisit = [Bool](repeating: false, count: 106)
 
 var queue = [(1, 0)], index = 0; isVisit[1] = true
 while index < queue.count {
@@ -84,7 +84,7 @@ while index < queue.count {
 
 
 func crtObstacles() -> [Int] {
-    var result = Array(0...1000)
+    var result = Array(0...105)
     for _ in 0..<(N+M) {
         result[io.readInt()] = io.readInt()
     }
