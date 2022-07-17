@@ -70,17 +70,15 @@ let villages: [Village] = crtVillages()
 let sumVillages: [Int] = crtSumVillages()
 
 var (lf, ryt) = (0, N-1)
-var minValue = Int.max
 while lf <= ryt {
     let mid = (lf + ryt) / 2
     if haveToLeft(mid) {
-        minValue = min(minValue, villages[mid].X)
         ryt = mid - 1
     } else {
         lf = mid + 1
     }
 }
-print(minValue)
+print(villages[lf].X)
 
 func haveToLeft(_ x: Int) -> Bool {
     sumVillages[x] >= sumVillages[N-1]-sumVillages[x]
