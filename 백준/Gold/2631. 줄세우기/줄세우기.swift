@@ -3,13 +3,12 @@ let list: [Int] = crtList()
 var dp = [Int](repeating: 1, count: N)
 
 for i in 1..<N {
-    for j in stride(from: i-1, through: 0, by: -1) {
+    for j in 0..<i {
         dp[i] = list[i] >= list[j] ? max(dp[i], dp[j]+1) : dp[i]
     }
 }
 
 print(N-dp.max()!)
-
 
 func crtList() -> [Int] {
     var result = [Int]()
