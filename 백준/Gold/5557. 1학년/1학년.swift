@@ -9,11 +9,8 @@ dp[0][list[0]] += 1
 for i in 1..<N-1 {
     for j in 0...20 {
         if dp[i-1][j] == 0 { continue }
-        if (0...20) ~= j+list[i] {
-            dp[i][j+list[i]] &+= dp[i-1][j]
-        }
-        if (0...20) ~= j-list[i] {
-            dp[i][j-list[i]] &+= dp[i-1][j]
+        for next in [j+list[i], j-list[i]] where (0...20) ~= next {
+            dp[i][next] &+= dp[i-1][j]
         }
     }
 }
