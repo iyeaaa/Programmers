@@ -5,7 +5,6 @@ var dp = Array(repeating: Array(repeating: 0, count: H+1), count: N+1)
 dp[0][0] = 1
 
 for i in 1...N {
-    dp[i][0] = 1
     dp[i] = dp[i-1]
     for block in student[i] {
         for j in stride(from: H, through: block, by: -1) {
