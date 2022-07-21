@@ -85,11 +85,7 @@ for i in stride(from: 2, through: N, by: 1) {
 
 var minValue = INF
 for i in 1...M {
-    for j in 0...2 {
-        if minValue > dp[N][i][j] {
-            minValue = dp[N][i][j]
-        }
-    }
+    minValue = min(minValue, dp[N][i].min()!)
 }
 print(minValue)
 
