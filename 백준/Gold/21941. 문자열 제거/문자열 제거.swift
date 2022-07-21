@@ -1,6 +1,3 @@
-import Foundation
-
-
 let S = ["0"] + readLine()!.map{String($0)}, lenS = S.count
 let M = Int(readLine()!)!
 let AX: [(A: String, X: Int)] = crtAX()
