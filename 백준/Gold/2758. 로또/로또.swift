@@ -13,6 +13,7 @@ for _ in 1...Int(readLine()!)! {
         if n > m { return 0 }
         if m == 1 || n == 1 { return 1 }
         if dp[n][m] != -1 { return dp[n][m] }
+        if m % 2 == 1 { return solve(n, m-1) }
 
         dp[n][m] = 0
         for k in stride(from: 1, through: m/2, by: 1) {
