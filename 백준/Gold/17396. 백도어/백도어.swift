@@ -160,7 +160,6 @@ var heap = Heap(Data(node: 0, cost: 0))
 while !heap.isEmpty {
     let cur = heap.pop()!
     if dist[cur.node] < cur.cost { continue }
-    if cur.node == N-1 { break }
     for (next, cost) in graph[cur.node] where cost+dist[cur.node] < dist[next] {
         dist[next] = cost + dist[cur.node]
         heap.insert(Data(node: next, cost: dist[next]))
