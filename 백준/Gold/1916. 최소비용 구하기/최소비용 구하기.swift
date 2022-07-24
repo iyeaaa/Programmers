@@ -142,7 +142,7 @@ typealias Edge = (to: Int, weight: Int)
 let (N, M) = (io.readInt(), io.readInt())
 let graph: [[Edge]] = crtGraph()
 let (start, end) = (io.readInt(), io.readInt())
-var dist = Array(repeating: INF, count: 100001); dist[start] = 0
+var dist = Array(repeating: INF, count: N+1); dist[start] = 0
 var pq = Heap(Data(node: start, cost: 0))
 
 while !pq.isEmpty {
