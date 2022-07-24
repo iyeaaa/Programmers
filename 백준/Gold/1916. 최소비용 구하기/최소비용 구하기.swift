@@ -140,30 +140,32 @@ struct Data: Comparable {
 let io = IO(), INF = 10000000000
 typealias Edge = (to: Int, weight: Int)
 let (N, M) = (io.readInt(), io.readInt())
-let graph: [[Edge]] = crtGraph()
-let (start, end) = (io.readInt(), io.readInt())
-var dist = Array(repeating: INF, count: N+1); dist[start] = 0
-var pq = Heap(Data(node: start, cost: 0))
+let graph: [[Int]] = crtGraph()
+let (START, END) = (io.readInt(), io.readInt())
+var dist = Array(repeating: INF, count: N+1); dist[START] = 0
+var pq = Heap(Data(node: START, cost: 0))
 
 while !pq.isEmpty {
     let cur = pq.pop()!
-    if cur.cost > dist[cur.node] {
+    let (node, cost) = (cur.node, cur.cost)
+    if cost > dist[node] {
         continue
     }
-    for (next, cost) in graph[cur.node] where cur.cost + cost < dist[next] {
-        dist[next] = cur.cost + cost
-        pq.insert(Data(node: next, cost: cur.cost+cost))
+    for next in 1...N where graph[node][next]+dist[node] < dist[next] {
+        dist[next] = dist[node] + graph[node][next]
+        pq.insert(Data(node: next, cost: dist[next]))
     }
 }
 
-print(dist[end])
+print(dist[END])
 
 
 
-func crtGraph() -> [[Edge]] {
-    var graph = Array(repeating: [Edge](), count: N+1)
+func crtGraph() -> [[Int]] {
+    var graph = Array(repeating: Array(repeating: INF, count: N+1), count: N+1)
     for _ in 0..<M {
-        graph[io.readInt()].append((io.readInt(), io.readInt()))
+        let (f, t, c) = (io.readInt(), io.readInt(), io.readInt())
+        if graph[f][t] > c { graph[f][t] = c }
     }
     return graph
 }
