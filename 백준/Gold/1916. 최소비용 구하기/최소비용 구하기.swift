@@ -143,17 +143,13 @@ let (N, M) = (io.readInt(), io.readInt())
 let graph: [[Int]] = crtGraph()
 let (START, END) = (io.readInt(), io.readInt())
 var dist = Array(repeating: INF, count: N+1); dist[START] = 0
-var pq = Heap(Data(node: START, cost: 0))
+var pq = Heap(START)
 
 while !pq.isEmpty {
     let cur = pq.pop()!
-    let (node, cost) = (cur.node, cur.cost)
-    if cost > dist[node] {
-        continue
-    }
-    for next in 1...N where graph[node][next]+dist[node] < dist[next] {
-        dist[next] = dist[node] + graph[node][next]
-        pq.insert(Data(node: next, cost: dist[next]))
+    for next in 1...N where graph[cur][next]+dist[cur] < dist[next] {
+        dist[next] = dist[cur] + graph[cur][next]
+        pq.insert(next)
     }
 }
 
