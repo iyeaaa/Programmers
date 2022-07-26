@@ -13,16 +13,11 @@ for weight in weights {
 var result = ""
 var isYes = false
 for bead in beads {
-    for i in 0...15000 where dp[i] >= 1 {
-        if dp[i+bead] >= 1 {
-            result += "Y "
-            isYes = true
-            break
-        }
+    for i in 0...15000 where dp[i] >= 1 && dp[i+bead] >= 1 {
+        isYes = true
+        break
     }
-    if !isYes {
-        result += "N "
-    }
+    result += (isYes ? "Y " : "N ")
     isYes = false
 }
 print(result)
