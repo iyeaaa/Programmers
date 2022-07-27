@@ -1,42 +1,30 @@
-class Queue{
-    var enqueue: [Int]
-    var dequeue: [Int] = []
-    
-    var isEmpty: Bool{
-        return enqueue.isEmpty && dequeue.isEmpty
+struct Queue {
+    var queue = [Int]()
+    var index = 0
+
+    init() {}
+    init(_ q: [Int]) { queue = q }
+
+    var count: Int { queue.count - index }
+
+    var first: Int { queue[index] }
+
+    mutating func append(_ q: Int) {
+        queue.append(q)
     }
-    var count: Int{
-        return enqueue.count + dequeue.count
+
+    mutating func pop() -> Int {
+        defer { index += 1 }
+        return queue[index]
     }
-    
-    init(_ queue:[Int]){
-        self.enqueue = queue
-    }
-    
-    func push(_ n: Int){
-        enqueue.append(n)
-    }
-    
-    func pop() -> Int?{
-        if dequeue.isEmpty{
-            dequeue = enqueue.reversed()
-            enqueue.removeAll()
-        }
-        return dequeue.popLast()
-    }
-    
 }
 
-let n = Int(readLine()!)!
-var temp = [Int]()
-for card in 1...n{
-    temp.append(card)
+let N = Int(readLine()!)!
+var queue = Queue(Array(1...N))
+
+while queue.count > 1 {
+    _ = queue.pop()
+    queue.append(queue.pop())
 }
-var queue: Queue = Queue(temp)
-while queue.count != 1{
-    let _ = queue.pop()
-    if let card = queue.pop(){
-        queue.push(card)
-    }
-}
-print(queue.pop()!)
+
+print(queue.first)
