@@ -1,11 +1,8 @@
 func solve() -> String {
     var count = 0
     for c in Array(readLine()!) {
-        if c == "(" { count += 1 }
-        else {
-            if count == 0 { return "NO"}
-            count -= 1
-        }
+        count += (c == "(" ? 1 : -1)
+        if count < 0 { return "NO" }
     }
     return count == 0 ? "YES" : "NO"
 }
