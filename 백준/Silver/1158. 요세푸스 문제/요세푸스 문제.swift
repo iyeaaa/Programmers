@@ -1,14 +1,13 @@
-import Foundation
-
-let josephus = readLine()!.components(separatedBy: " ").map({Int($0)!}) // [N, K]
-var nums: [Int] = Array(1...josephus[0]) // [1...N]
-var check = josephus[1] - 1 // K - 1
-var result = [Int]() // 결과 순열
+let input = readLine()!.split{$0==" "}.map{Int(String($0))!}
+let (N, K) = (input[0], input[1])
+var list = Array(1...N)
+var point = K-1
+var result = [Int]()
 
 while true {
-    result.append(nums.remove(at: check))
-    if nums.isEmpty { break }
-    check = (check + josephus[1] - 1) % nums.count
+    result.append(list.remove(at: point))
+    if list.isEmpty { break }
+    point = (point+K-1) % list.count
 }
 
-print("<" + result.map({String($0)}).joined(separator: ", ") + ">")
+print("<" + result.map{String($0)}.joined(separator: ", ") + ">")
