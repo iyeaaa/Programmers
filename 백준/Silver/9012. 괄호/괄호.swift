@@ -1,18 +1,17 @@
-for _ in 0..<Int(readLine()!)! {
-    let vps = readLine()!
-    var array = [Int]()
-
-    for v in vps {
-        if v == "(" {
-            array.append(0)
-        } else {
-            if array.isEmpty {
-                array.append(0)
-                break
-            }
-            let _ = array.popLast()
+func solve() -> String {
+    var count = 0
+    for c in Array(readLine()!) {
+        if c == "(" { count += 1 }
+        else {
+            if count == 0 { return "NO"}
+            count -= 1
         }
     }
-
-    print(array.isEmpty ? "YES" : "NO")
+    return count == 0 ? "YES" : "NO"
 }
+
+var result = ""
+for _ in 0..<Int(readLine()!)! {
+    result += "\(solve())\n"
+}
+print(result)
