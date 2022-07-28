@@ -76,8 +76,11 @@ while idx < queue.count {
     }
 }
 
-print(parent[2...N].map{String($0)}.joined(separator: "\n"))
-
+var result = ""
+for i in 2...N {
+    result += "\(parent[i])\n"
+}
+print(result)
 
 func crtTree() -> [[Int]] {
     var tree = [[Int]](repeating: [], count: N+1)
