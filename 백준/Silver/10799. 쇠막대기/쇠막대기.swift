@@ -1,17 +1,14 @@
-let vim = readLine()!
 var count = 0
-var result = 0
-var pre = false
-
-for v in vim {
-    if v == "(" {
+var isPreOpen = false
+var sum = 0
+for c in readLine()! {
+    if c == "(" {
         count += 1
-        pre = true
+        isPreOpen = true
     } else {
         count -= 1
-        result += (pre ? count : 1)
-        pre = false
+        sum += isPreOpen ? count : 1
+        isPreOpen = false
     }
 }
-
-print(result)
+print(sum)
