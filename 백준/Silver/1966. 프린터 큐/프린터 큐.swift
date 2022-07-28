@@ -1,42 +1,36 @@
-for _ in 0..<Int(readLine()!)! {
-    var input = readLine()!.split{$0==" "}.map{Int(String($0))!}
-    let (n, m) = (input[0], input[1])
-    input = readLine()!.split{$0==" "}.map{Int(String($0))!}
-    var list = [Element]()
+var result = ""
 
-    for i in 0..<n {
-        list.append(Element(no: i, impo: input[i]))
-    }
+func solve() -> Int {
+    let input = readLine()!.split{$0==" "}.map{Int(String($0))!}
+    let (_, M) = (input[0], input[1])
+    var documents = Array(readLine()!.split{$0==" "}.map{Int(String($0))!}.enumerated())
+    var first = 0
 
-    var count = 1
+    var count = 0
     while true {
-        let temp = findMaxIndex(list: list)
-        if temp != 0 {
-            list.append(list.removeFirst())
-        } else {
-            let removed = list.removeFirst()
-            if removed.no == m {
-                print(count)
-                break
-            }
+        if isGreat() {
             count += 1
+            if documents[first].offset == M {
+                return count
+            }
+            first += 1
+        } else {
+            documents.append(documents[first])
+            first += 1
         }
+    }
+
+    func isGreat() -> Bool {
+        for i in first+1..<documents.count {
+            if documents[first].element < documents[i].element {
+                return false
+            }
+        }
+        return true
     }
 }
 
-func findMaxIndex(list: [Element]) -> Int {
-    var max = -1
-    var index = 0
-    for i in 0..<list.count {
-        if max < list[i].impo {
-            max = list[i].impo
-            index = i
-        }
-    }
-    return index
+for _ in 0..<Int(readLine()!)! {
+    result += "\(solve())\n"
 }
-
-struct Element {
-    let no: Int
-    let impo: Int
-}
+print(result)
