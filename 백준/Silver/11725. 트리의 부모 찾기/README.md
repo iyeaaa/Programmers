@@ -4,11 +4,11 @@
 
 ### 성능 요약
 
-메모리: 78592 KB, 시간: 204 ms
+메모리: 92896 KB, 시간: 76 ms
 
 ### 분류
 
-너비 우선 탐색(bfs), 깊이 우선 탐색(dfs), 그래프 이론(graphs), 그래프 탐색(graph_traversal), 트리(trees)
+그래프 이론(graphs), 그래프 탐색(graph_traversal), 트리(trees), 너비 우선 탐색(bfs), 깊이 우선 탐색(dfs)
 
 ### 문제 설명
 

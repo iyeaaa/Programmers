@@ -1,38 +1,91 @@
-let n = Int(readLine()!)!
-var node = [[Int]](repeating: [], count: n+1)
-var parent = [Int](repeating: 0, count: n+1) // 0 -> 방문x
-var result = ""
+import Foundation
 
-for _ in 1..<n {
-    let input = readLine()!.split{$0==" "}.map{Int(String($0))!}
-    node[input[0]].append(input[1])
-    node[input[1]].append(input[0])
-}
+final class IO {
+    private let buffer:[UInt8]
+    private var index: Int = 0
 
-bfs()
-for i in 2...n {
-    result += "\(parent[i])\n"
-}
+    init(fileHandle: FileHandle = FileHandle.standardInput) {
 
-print(result)
+        buffer = Array(try! fileHandle.readToEnd()!)+[UInt8(0)] // 인덱스 범위 넘어가는 것 방지
+    }
 
-func bfs() {
-    var index = 0
-    var queue = [1]
-    parent[1] = -1
-    while index < queue.count {
-        let cur = queue[index]
-        for i in node[cur] {
-            if parent[i] == 0 {
-                queue.append(i)
-                parent[i] = cur
-            }
+    @inline(__always) private func read() -> UInt8 {
+        defer { index += 1 }
+
+        return buffer[index]
+    }
+
+    @inline(__always) func readInt() -> Int {
+        var sum = 0
+        var now = read()
+        var isPositive = true
+
+        while now == 10
+                      || now == 32 { now = read() } // 공백과 줄바꿈 무시
+        if now == 45 { isPositive.toggle(); now = read() } // 음수 처리
+        while now >= 48, now <= 57 {
+            sum = sum * 10 + Int(now-48)
+            now = read()
         }
-        index += 1
+
+        return sum * (isPositive ? 1:-1)
+    }
+
+    @inline(__always) func readString() -> String {
+        var now = read()
+
+        while now == 10 || now == 32 { now = read() } // 공백과 줄바꿈 무시
+        let beginIndex = index-1
+
+        while now != 10,
+              now != 32,
+              now != 0 { now = read() }
+
+        return String(bytes: Array(buffer[beginIndex..<(index-1)]), encoding: .ascii)!
+    }
+
+    @inline(__always) func readByteSequenceWithoutSpaceAndLineFeed() -> [UInt8] {
+        var now = read()
+
+        while now == 10 || now == 32 { now = read() } // 공백과 줄바꿈 무시
+        let beginIndex = index-1
+
+        while now != 10,
+              now != 32,
+              now != 0 { now = read() }
+
+        return Array(buffer[beginIndex..<(index-1)])
+    }
+
+    @inline(__always) func writeByString(_ output: String) { // wapas
+        FileHandle.standardOutput.write(output.data(using: .utf8)!)
     }
 }
 
+let io = IO()
+let N = io.readInt()
+let tree: [[Int]] = crtTree()
+var parent = [Int](repeating: -1, count: N+1)
+var queue = [1], idx = 0; parent[1] = 1
+
+while idx < queue.count {
+    let cur = queue[idx]; idx += 1
+    for next in tree[cur] where parent[next] == -1 {
+        queue.append(next)
+        parent[next] = cur
+    }
+}
+
+print(parent[2...N].map{String($0)}.joined(separator: "\n"))
 
 
-
+func crtTree() -> [[Int]] {
+    var tree = [[Int]](repeating: [], count: N+1)
+    for _ in 1..<N {
+        let (x, y) = (io.readInt(), io.readInt())
+        tree[x].append(y)
+        tree[y].append(x)
+    }
+    return tree
+}
 
