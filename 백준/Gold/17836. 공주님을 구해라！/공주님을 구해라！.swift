@@ -9,7 +9,7 @@ var result = Int.max
 while idx < queue.count {
     let (y, x) = queue[idx]; idx += 1
     if y == N-1 && x == M-1 { result = min(visit[N-1][M-1], result); break }
-    if graph[y][x] == 2 { result = min(visit[y][x] + N-1-y + M-1-x, result) }
+    if graph[y][x] == 2 { result = visit[y][x] + N-1-y + M-1-x }
     for (ny, nx) in [(y-1,x),(y+1,x),(y,x+1),(y,x-1)] {
         if !((0..<N) ~= ny && (0..<M) ~= nx) { continue }
         if visit[ny][nx] != -1 || graph[ny][nx] == 1 { continue }
