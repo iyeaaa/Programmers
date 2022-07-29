@@ -1,62 +1,106 @@
-let size = readLine()!.split{$0==" "}.map{Int(String($0))!}
-let m = size[0]
-let n = size[1]
-let h = size[2]
-let dz = [-1, 1, 0, 0, 0, 0]
-let dx = [0, 0, 0, -1, 0, 1]
-let dy = [0, 0, -1, 0, 1, 0]
-var map = [[[Int]]](repeating: [[Int]](repeating: [Int](repeating: 0, count: m), count: n), count: h)
-var queue = [[Int]]()
-var zeroNum = 0
+import Foundation
 
-for i in 0..<h {
-    for j in 0..<n {
-        let temp = readLine()!.split{$0==" "}.map{Int(String($0))!}
-        for k in 0..<m {
-            map[i][j][k] = temp[k]
-            if temp[k] == 1 {
-                queue.append([i, j, k])
-            }
-            else if temp[k] == 0 {
-                zeroNum += 1
-            }
+final class IO {
+    private let buffer:[UInt8]
+    private var index: Int = 0
+
+    init(fileHandle: FileHandle = FileHandle.standardInput) {
+
+        buffer = Array(try! fileHandle.readToEnd()!)+[UInt8(0)] // 인덱스 범위 넘어가는 것 방지
+    }
+
+    @inline(__always) private func read() -> UInt8 {
+        defer { index += 1 }
+
+        return buffer[index]
+    }
+
+    @inline(__always) func readInt() -> Int {
+        var sum = 0
+        var now = read()
+        var isPositive = true
+
+        while now == 10
+                      || now == 32 { now = read() } // 공백과 줄바꿈 무시
+        if now == 45 { isPositive.toggle(); now = read() } // 음수 처리
+        while now >= 48, now <= 57 {
+            sum = sum * 10 + Int(now-48)
+            now = read()
         }
+
+        return sum * (isPositive ? 1:-1)
+    }
+
+    @inline(__always) func readString() -> String {
+        var now = read()
+
+        while now == 10 || now == 32 { now = read() } // 공백과 줄바꿈 무시
+        let beginIndex = index-1
+
+        while now != 10,
+              now != 32,
+              now != 0 { now = read() }
+
+        return String(bytes: Array(buffer[beginIndex..<(index-1)]), encoding: .ascii)!
+    }
+
+    @inline(__always) func readByteSequenceWithoutSpaceAndLineFeed() -> [UInt8] {
+        var now = read()
+
+        while now == 10 || now == 32 { now = read() } // 공백과 줄바꿈 무시
+        let beginIndex = index-1
+
+        while now != 10,
+              now != 32,
+              now != 0 { now = read() }
+
+        return Array(buffer[beginIndex..<(index-1)])
+    }
+
+    @inline(__always) func writeByString(_ output: String) { // wapas
+        FileHandle.standardOutput.write(output.data(using: .utf8)!)
     }
 }
 
-bfs()
 
-func bfs() {
-    var index = 0
-    var count = 0
-    var day = 1
-    while index < queue.count {
-        let z = queue[index][0]
-        let x = queue[index][1]
-        let y = queue[index][2]
-        for i in 0...5 {
-            let nz = z + dz[i]
-            let nx = x + dx[i]
-            let ny = y + dy[i]
+let io = IO()
+let (M, N, H) = (io.readInt(), io.readInt(), io.readInt())
+var queue = [(Int, Int, Int)](), idx = 0
+var graph: [[[Int]]] = crtGraph()
 
-            if nz < 0 || nz > h-1 || nx < 0 || nx > n-1 || ny < 0 || ny > m-1 {
-                continue
-            }
+while idx < queue.count {
+    let (z, y, x) = queue[idx]; idx += 1
+    for (nz, ny, nx) in [(z,y+1,x),(z,y-1,x),(z,y,x+1),(z,y,x-1),(z-1,y,x),(z+1,y,x)] {
+        if !((0..<H) ~= nz && (0..<N) ~= ny && (0..<M) ~= nx) { continue }
+        if graph[nz][ny][nx] != 0 { continue }
+        queue.append((nz, ny, nx))
+        graph[nz][ny][nx] = graph[z][y][x] + 1
+    }
+}
 
-            if map[nz][nx][ny] != 0 {
-                continue
-            }
-
-            map[nz][nx][ny] = map[z][x][y] + 1
-            queue.append([nz, nx, ny])
-            count += 1
-            day = map[nz][nx][ny]
+var maxValue = -1
+for i in 0..<H {
+    for j in 0..<N {
+        for k in 0..<M {
+            if graph[i][j][k] == 0 { print(-1); exit(0) }
+            maxValue = max(maxValue, graph[i][j][k])
         }
-        index += 1
     }
-    if zeroNum == count {
-        print(day-1)
-    } else {
-        print(-1)
+}
+print(maxValue-1)
+
+func crtGraph() -> [[[Int]]] {
+    var graph = Array(repeating: Array(repeating: [Int](), count: N), count: H)
+    for i in 0..<H {
+        for j in 0..<N {
+            for k in 0..<M {
+                let cur = io.readInt()
+                graph[i][j].append(cur)
+                if cur == 1 {
+                    queue.append((i, j, k))
+                }
+            }
+        }
     }
+    return graph
 }
