@@ -1,81 +1,60 @@
-let input = readLine()!.split{$0==" "}.map{Int(String($0))!}
-let (n, m) = (input[0], input[1])
+let input = readLine()!.split(separator: " ").map{Int(String($0))!}
+let (N, M) = (input[0], input[1]), area = N*M
 var graph = [[Int]]()
-var virus_p = [[Int]]()
-var safe_p = [[Int]]()
-
-inputGraph()
-areaFind()
-
-var max = 0
-for i in 0..<safe_p.count {
-    for j in i+1..<safe_p.count {
-        for k in j+1..<safe_p.count {
-            graph[safe_p[i][0]][safe_p[i][1]] = 1
-            graph[safe_p[j][0]][safe_p[j][1]] = 1
-            graph[safe_p[k][0]][safe_p[k][1]] = 1
-            let temp = bfs(graph)
-            if max < temp {
-                max = temp
-            }
-            graph[safe_p[i][0]][safe_p[i][1]] = 0
-            graph[safe_p[j][0]][safe_p[j][1]] = 0
-            graph[safe_p[k][0]][safe_p[k][1]] = 0
+var safeZone = [(Int, Int)]()
+var wallCnt = 3
+var queue = [(Int, Int)](), idx = 0
+for _ in 0..<N {
+    graph.append(readLine()!.split(separator: " ").map{Int(String($0))!})
+}
+for i in 0..<N {
+    for j in 0..<M {
+        if graph[i][j] == 2 {
+            queue.append((i, j))
+            continue
+        }
+        if graph[i][j] == 0 {
+            safeZone.append((i, j))
+            continue
+        }
+        if graph[i][j] == 1 {
+            wallCnt += 1
         }
     }
 }
 
-print(max)
+var maxValue = -1
+combination(0, 0)
+print(maxValue)
 
-func inputGraph() {
-    for _ in 0..<n {
-        graph.append(readLine()!.split{$0==" "}.map{Int(String($0))!})
+func combination(_ idx: Int, _ digit: Int) {
+    if digit == 3 {
+        maxValue = max(maxValue, bfs())
+        return
     }
+    if idx >= safeZone.count {
+        return
+    }
+    let (y, x) = safeZone[idx]
+    graph[y][x] = 1
+    combination(idx+1, digit+1)
+    graph[y][x] = 0
+    combination(idx+1, digit)
 }
 
-func areaFind() {
-    for i in 0..<n {
-        for j in 0..<m {
-            if graph[i][j] == 2 {
-                virus_p.append([i, j])
-            }
-            if graph[i][j] == 0 {
-                safe_p.append([i, j])
-            }
+func bfs() -> Int {
+    var graph = graph
+    var queue = queue, idx = idx
+    var virusCnt = 0
+    while idx < queue.count {
+        let (y, x) = queue[idx]; idx += 1
+        for (ny, nx) in [(y-1,x),(y+1,x),(y,x+1),(y,x-1)] {
+            if !((0..<N) ~= ny && (0..<M) ~= nx) { continue }
+            if graph[ny][nx] != 0 { continue }
+            queue.append((ny, nx))
+            graph[ny][nx] = 2
+            virusCnt += 1
         }
     }
-}
-
-func notInfectedLocalSearch(graph: [[Int]]) -> Int {
-    var count = 0
-    for i in 0..<n {
-        for j in 0..<m {
-            if graph[i][j] == 0 {
-                count += 1
-            }
-        }
-    }
-    return count
-}
-
-func bfs(_ graph_t: [[Int]]) -> Int {
-    var graph = graph_t
-    var queue = virus_p
-    var index = 0
-    while index < queue.count {
-        let (x, y) = (queue[index][0], queue[index][1])
-        for i in [[-1, 0], [0, -1], [1, 0], [0, 1]] {
-            let (nx, ny) = (x + i[0], y + i[1])
-            if !(0..<n).contains(nx) || !(0..<m).contains(ny) {
-                continue
-            }
-            if graph[nx][ny] != 0 {
-                continue
-            }
-            queue.append([nx, ny])
-            graph[nx][ny] = 2
-        }
-        index += 1
-    }
-    return notInfectedLocalSearch(graph: graph)
+    return safeZone.count - 3 - virusCnt
 }
