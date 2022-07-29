@@ -1,8 +1,7 @@
 let input = readLine()!.split(separator: " ").map{Int(String($0))!}
-let (N, M) = (input[0], input[1]), area = N*M
+let (N, M) = (input[0], input[1])
 var graph = [[Int]]()
 var safeZone = [(Int, Int)]()
-var wallCnt = 3
 var queue = [(Int, Int)](), idx = 0
 for _ in 0..<N {
     graph.append(readLine()!.split(separator: " ").map{Int(String($0))!})
@@ -15,10 +14,6 @@ for i in 0..<N {
         }
         if graph[i][j] == 0 {
             safeZone.append((i, j))
-            continue
-        }
-        if graph[i][j] == 1 {
-            wallCnt += 1
         }
     }
 }
@@ -27,8 +22,8 @@ var maxValue = -1
 combination(0, 0)
 print(maxValue)
 
-func combination(_ idx: Int, _ digit: Int) {
-    if digit == 3 {
+func combination(_ idx: Int, _ wallCnt: Int) {
+    if wallCnt == 3 {
         maxValue = max(maxValue, bfs())
         return
     }
@@ -37,9 +32,9 @@ func combination(_ idx: Int, _ digit: Int) {
     }
     let (y, x) = safeZone[idx]
     graph[y][x] = 1
-    combination(idx+1, digit+1)
+    combination(idx+1, wallCnt+1)
     graph[y][x] = 0
-    combination(idx+1, digit)
+    combination(idx+1, wallCnt)
 }
 
 func bfs() -> Int {
