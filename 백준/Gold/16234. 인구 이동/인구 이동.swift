@@ -1,80 +1,55 @@
-let input = readLine()!.split{$0==" "}.map{Int(String($0))!}
+let input = readLine()!.split(separator: " ").map{Int(String($0))!}
 let (N, L, R) = (input[0], input[1], input[2])
-var graph = [[Int]]()
-var graph_Temp = [[Int]]()
-var visit = [[Int]]()
-let direction = [[-1, 0], [0, -1], [1, 0], [0, 1]]
-var day = 0
+var graph: [[Int]] = crtGraph()
+var isVisit = [[Bool]](repeating: [Bool](repeating: false, count: N), count: N)
 
-
-makeGraph()
-searchGraph()
-print(day)
-
-
-func makeGraph() {
-    for _ in 0..<N {
-        graph.append(readLine()!.split{$0==" "}.map{Int(String($0))!})
-    }
-    graph_Temp = graph
-}
-
-func searchGraph() {
-    while true {
-        visit = [[Int]](repeating: [Int](repeating: -1, count: N), count: N)
-        for i in 0..<N {
-            for j in 0..<N {
-                if visit[i][j] == -1 {
-                    bfs(i, j)
-                }
-            }
-        }
-        if equal {
-            break
-        } else {
-            day += 1
-            graph = graph_Temp
-        }
-    }
-}
-
-var equal: Bool {
+var time = 0
+var preGraph = graph
+while true {
     for i in 0..<N {
         for j in 0..<N {
-            if graph[i][j] != graph_Temp[i][j] {
-                return false
-            }
+            if isVisit[i][j] { continue }
+            mergeNation(i, j)
         }
     }
-    return true
-}
-
-func changeToAverage(_ sum: Int, _ nation: [[Int]]) {
-    let average = sum / nation.count
-    for i in nation {
-        graph_Temp[i[0]][i[1]] = average
+    if preGraph == graph {
+        break
     }
+    preGraph = graph
+    time += 1
+    isVisit = [[Bool]](repeating: [Bool](repeating: false, count: N), count: N)
 }
+print(time)
 
-func bfs(_ i: Int, _ j: Int) {
-    var index = 0
-    var queue = [[i, j]]
-    var sum = graph[i][j]
-    visit[i][j] = 1
-    while index < queue.count {
-        let (x, y) = (queue[index][0], queue[index][1])
-        for i in direction {
-            let (nx, ny) = (x+i[0], y+i[1])
-            if (0..<N).contains(nx) && (0..<N).contains(ny) {
-                let differ = abs(graph[nx][ny] - graph[x][y])
-                if differ >= L && differ <= R && visit[nx][ny] == -1 {
-                    visit[nx][ny] = 1
-                    queue.append([nx, ny])
-                    sum += graph[nx][ny]
-                }
-            }
+func mergeNation(_ y: Int, _ x: Int) {
+    var nationCnt = 1
+    var pplCntSum = graph[y][x]
+    var queue = [(y, x)], idx = 0; isVisit[y][x] = true
+
+    while idx < queue.count {
+        let (y, x) = queue[idx]; idx += 1
+        for (ny, nx) in [(y+1,x),(y-1,x),(y,x+1),(y,x-1)] {
+            if !((0..<N) ~= ny && (0..<N) ~= nx) { continue }
+            if !((L...R) ~= abs(graph[ny][nx] - graph[y][x])) { continue }
+            if isVisit[ny][nx] { continue }
+            queue.append((ny, nx))
+            isVisit[ny][nx] = true
+            nationCnt += 1
+            pplCntSum += graph[ny][nx]
         }
-        index += 1
     }
-    changeToAverage(sum, queue)
+
+    for (y, x) in queue {
+        let person = pplCntSum/nationCnt
+        graph[y][x] = person
+    }
 }
+
+func crtGraph() -> [[Int]] {
+    var result = [[Int]]()
+    for _ in 0..<N {
+        result.append(readLine()!.split(separator: " ").map{Int(String($0))!})
+    }
+    return result
+}
+
