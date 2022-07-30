@@ -1,14 +1,14 @@
-# [Gold V] 치즈 - 2636 
+# [Gold IV] 치즈 - 2636 
 
 [문제 링크](https://www.acmicpc.net/problem/2636) 
 
 ### 성능 요약
 
-메모리: 69376 KB, 시간: 16 ms
+메모리: 69284 KB, 시간: 16 ms
 
 ### 분류
 
-너비 우선 탐색(bfs), 그래프 이론(graphs), 그래프 탐색(graph_traversal), 구현(implementation), 시뮬레이션(simulation)
+너비 우선 탐색(bfs), 깊이 우선 탐색(dfs), 그래프 이론(graphs), 그래프 탐색(graph_traversal), 구현(implementation), 시뮬레이션(simulation)
 
 ### 문제 설명
 
