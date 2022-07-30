@@ -1,81 +1,51 @@
-import Foundation
+struct Pos{
+    let x : (Int,Int)
+    let horse : Int
+    let cnt : Int
 
-var buffer = Array(FileHandle.standardInput.readDataToEndOfFile()), idx = 0
-buffer.append(0)
-@inline(__always) func readByte() -> UInt8 {
-    defer { idx += 1 }
-    return buffer[idx]
 }
-@inline(__always) func readInt() -> Int {
-    var number = 0, byte = readByte()
-    while byte == 10 || byte == 32 { byte = readByte() }
-    while 48...57 ~= byte { number = number * 10 + Int(byte - 48); byte = readByte() }
-    return number
+let dxy = [(0,1),(1,0),(-1,0),(0,-1)]
+let horseDxy = [(-2,1),(-1,2),(1,2),(2,1),(2,-1),(1,-2),(-1,-2),(-2,-1)]
+
+let k = Int(readLine()!)!
+let arr = readLine()!.split(separator: " ").map{Int(String($0))!}
+let w = arr[1], h = arr[0]
+var map = [[Int]]()
+var check = Array(repeating: Array(repeating: -1, count: h), count: w)
+
+for _ in 0..<w{
+    map.append( readLine()!.split(separator: " ").map{Int(String($0))!})
+
 }
-struct Element {
-    let x: Int
-    let y: Int
-    let c: Int
-}
+var index = 0
+func bfs()->Int{
+    var queue = [Pos]()
+    check[0][0] = k
+    queue.append(Pos(x:(0,0),horse:k,cnt:0))
+    while queue.count > index{
+        let pos = queue[index]
+        if pos.x.0 == w-1 && pos.x.1 == h-1{
+            return pos.cnt
+        }
 
-func main() {
-    let k = readInt()
-    let (w, h) = (readInt(), readInt())
-    let jump = [[-1, -2], [-2, -1], [-2, 1], [-1, 2], [1, -2], [2, -1], [2, 1], [1, 2]]
-    let direction = [[-1, 0], [0, -1], [1, 0], [0, 1]]
-    var graph = Array(repeating: Array(repeating: 0, count: w), count: h)
-    var visit = Array(repeating: Array(repeating: Array(repeating: -1, count: k+1), count: w), count: h)
-    for i in 0..<h {
-        for j in 0..<w {
-            graph[i][j] = readInt()
+        for i in 0..<4{
+            let next = (pos.x.0 + dxy[i].0, pos.x.1 + dxy[i].1)
+            if next.0 >= w || next.1 >= h || next.0 < 0 || next.1 < 0 {continue}
+            if check[next.0][next.1] >= pos.horse || map[next.0][next.1] == 1{continue}
+            check[next.0][next.1] = pos.horse
+            queue.append(Pos(x: (next.0,next.1),horse: pos.horse,cnt: pos.cnt+1))
         }
-    }
+        if pos.horse < 0 {continue}
+        for i in 0..<8{
+            let next = (pos.x.0 + horseDxy[i].0, pos.x.1 + horseDxy[i].1)
+            if next.0 >= w || next.1 >= h || next.0 < 0 || next.1 < 0 {continue}
+            if check[next.0][next.1] >= pos.horse-1 || map[next.0][next.1] == 1{continue}
+            check[next.0][next.1] = pos.horse - 1
+            queue.append(Pos(x: (next.0,next.1),horse: pos.horse-1,cnt: pos.cnt+1))
+        }
 
-    var index = 0
-    var queue = [Element(x: 0, y: 0, c: 0)]
-    visit[0][0][0] = 0
-
-    while index < queue.count {
-        let cur = queue[index]
-        if cur.x == h-1 && cur.y == w-1 {
-            print(visit[cur.x][cur.y][cur.c])
-            exit(0)
-        }
-        if cur.c < k {
-            for j in jump {
-                let next = (cur.x+j[0], cur.y+j[1], cur.c+1)
-                if isRightPoint(next.0, next.1, next.2) {
-                    queue.append(Element(x: next.0, y: next.1, c: next.2))
-                    visit[next.0][next.1][next.2] = visit[cur.x][cur.y][cur.c] + 1
-                }
-            }
-        }
-        for d in direction {
-            let next = (cur.x+d[0], cur.y+d[1], cur.c)
-            if isRightPoint(next.0, next.1, next.2) {
-                queue.append(Element(x: next.0, y: next.1, c: next.2))
-                visit[next.0][next.1][next.2] = visit[cur.x][cur.y][cur.c] + 1
-            }
-        }
         index += 1
     }
-
-    print(-1)
-
-    func isRightPoint(_ x: Int, _ y: Int, _ z: Int) -> Bool {
-        if !(0..<h ~= x && 0..<w ~= y) {
-            return false
-        }
-        if visit[x][y][z] != -1 {
-            return false
-        }
-        if graph[x][y] == 1 {
-            return false
-        }
-        return true
-    }
-
+    return -1
 }
-
-main()
-
+print(bfs())
