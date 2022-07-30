@@ -1,67 +1,30 @@
-import Foundation
-
-var buffer = Array(FileHandle.standardInput.readDataToEndOfFile()), idx = 0
-buffer.append(0)
-@inline(__always) func readByte() -> UInt8 {
-    defer { idx += 1 }
-    return buffer[idx]
+var graph = (0...8).map{ _ in (0..<8).map{ _ in (0..<8).map{ _ in Character(".") } } }
+for i in 0..<8 {
+    let input = Array(readLine()!)
+    for j in 0..<8 {
+        graph[0][i][j] = input[j]
+    }
 }
-@inline(__always) func readChar() -> Character {
-    var byte = readByte()
-    while byte == 10 || byte == 32 { byte = readByte() }
-    return Character(UnicodeScalar(byte))
-}
-
-var graph = Array(repeating: Array(repeating: Character("."), count: 8), count: 8)
-var visit = [[Int]:Int]()
-var wall = Set<[Int]>()
-var index = 0, queue = [(7, 0, -1)]; visit[[7, 0], default: 0] += 1
-
-(0..<8).forEach { i in
-    (0..<8).forEach { j in
-        graph[i][j] = readChar()
-        if graph[i][j] == "#" {
-            wall.insert([i, j])
-        }
+for i in 1...8 {
+    for j in stride(from: 6, through: 0, by: -1) {
+        graph[i][j+1] = graph[i-1][j]
     }
 }
 
-while index < queue.count {
-    let cur = (queue[index].0, queue[index].1, queue[index].2+1)
-    if isWall(cur.0, cur.1, cur.2) {
-        index += 1
-        continue
-    }
-    if cur.0 == 0 && cur.1 == 7 {
-        print(1); exit(0)
-    }
-    for d in [[-1, 0], [0, -1], [1, 0], [0, 1], [1, 1], [-1, 1], [1, -1], [-1, -1]] {
-        let next = (cur.0+d[0], cur.1+d[1], cur.2)
-        if !((0..<8) ~= next.0 && (0..<8) ~= next.1) {
-            continue
-        }
-        if isWall(next.0, next.1, next.2) {
-            continue
-        }
-        if let v = visit[[next.0, next.1]] {
-            if v > 8 {
-                continue
-            }
-        }
-        queue.append((next.0, next.1, next.2))
-        visit[[next.0, next.1], default: 0] += 1
-    }
-    queue.append((cur.0, cur.1, cur.2))
-    index += 1
-}
 
-print(0)
+var isVisit = (0..<8).map{ _ in (0..<8).map{ _ in 8 } }
+var queue = [(7, 0, 0)], idx = 0; isVisit[7][0] -= 1
+var result = 0
 
-func isWall(_ y: Int, _ x: Int, _ s: Int) -> Bool {
-    for w in wall {
-        if y == w[0]+s && x == w[1] {
-            return true
-        }
+while idx < queue.count {
+    let (y, x, s) = queue[idx]; idx += 1
+    if y == 0 && x == 7 { result = 1; break }
+    for (ny, nx) in [(y,x),(y+1,x),(y-1,x),(y,x+1),(y,x-1),(y+1,x+1),(y-1,x+1),(y+1,x-1),(y-1,x-1)] {
+        if !((0..<8) ~= ny && (0..<8) ~= nx) { continue }
+        if isVisit[ny][nx] <= 0 { continue }
+        if graph[s][ny][nx] == "#" || graph[s > 7 ? 8 : s+1][ny][nx] == "#" { continue }
+        queue.append((ny, nx, s > 7 ? 8 : s+1))
+        isVisit[ny][nx] -= 1
     }
-    return false
 }
+print(result)
