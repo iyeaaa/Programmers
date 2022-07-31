@@ -1,45 +1,31 @@
-let input = readLine()!.split{$0==" "}.map{Int(String($0))!}
-let (n, m) = (input[0], input[1])
-var graph = [[Int]]()
+let input = readLine()!.split(separator: " ").map{Int(String($0))!}
+let INF = 2
+let (N, M) = (input[0], input[1])
+let graph: [[Int]] = crtGraph()
 
-struct Element {
-    let x: Int
-    let y: Int
-    let wall: Int
-}
+// 접근한적 없음 INF, 안부숨 0, 부숨 1
+var destory = (0..<N).map{ _ in (0..<M).map{ _ in INF } }
+var queue = [(0, 0, 1)], idx = 0; destory[0][0] = 0
+var result = -1
 
-for i in 0..<n {
-    graph.append(Array(readLine()!).map{Int(String($0))!})
-}
-
-print(bfs())
-
-func bfs() -> Int {
-    var visited = Array(repeating: Array(repeating: [0, 0], count: m), count: n)
-    visited[0][0][0] = 1
-    var queue = [Element(x: 0, y: 0, wall: 0)]
-    var index = 0
-    while index < queue.count {
-        let cur = queue[index]
-        if cur.x == n-1 && cur.y == m-1 {
-            return visited[cur.x][cur.y][cur.wall]
-        }
-        for i in [[-1, 0], [0, -1], [1, 0], [0, 1]] {
-            let (nx, ny) = (cur.x + i[0], cur.y + i[1])
-            if !(0..<n).contains(nx) || !(0..<m).contains(ny) {
-                continue
-            }
-            if graph[nx][ny] == 1 && cur.wall == 0 {
-                visited[nx][ny][1] = visited[cur.x][cur.y][cur.wall] + 1
-                queue.append(Element(x: nx, y: ny, wall: 1))
-            }
-            if graph[nx][ny] == 0 && visited[nx][ny][cur.wall] == 0 {
-                visited[nx][ny][cur.wall] = visited[cur.x][cur.y][cur.wall] + 1
-                queue.append(Element(x: nx, y: ny, wall: cur.wall))
-            }
-        }
-        index += 1
+while idx < queue.count {
+    let (y, x, cnt) = queue[idx]; idx += 1
+    if y == N-1 && x == M-1 { result = cnt; break }
+    for (ny, nx) in [(y+1,x),(y-1,x),(y,x+1),(y,x-1)] {
+        if !((0..<N) ~= ny && (0..<M) ~= nx) { continue }
+        if destory[y][x] == 1 && graph[ny][nx] == 1 { continue }
+        if destory[ny][nx] <= destory[y][x] { continue }
+        queue.append((ny, nx, cnt+1))
+        destory[ny][nx] = (graph[ny][nx] == 0 ? destory[y][x] : 1)
     }
-    return -1
+}
+print(result)
+
+func crtGraph() -> [[Int]] {
+    var result = [[Int]]()
+    for _ in 0..<N {
+        result.append(Array(readLine()!).map{Int(String($0))!})
+    }
+    return result
 }
 
