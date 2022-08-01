@@ -1,91 +1,79 @@
 let input = readLine()!.split{$0==" "}.map{Int(String($0))!}
-let (n, m) = (input[0], input[1])
-var graph = [[Int]](repeating: [], count: n)
-var visit = [[Int]](repeating: [Int](repeating: -1, count: m), count: n)
-var cont = [[Int]](repeating: [Int](repeating: 0, count: m), count: n)
-var notZero = [[Int]]()
+let (N, M) = (input[0], input[1])
+var graph: [[Int]] = crtGraph()
+var ice = Set<[Int]>()
 
-makeGraph()
-findNotZero()
-var area_Ea = 1
-var count = 0
-while area_Ea < 2 {
-    oneYearsLater()
-    count += 1
-    area_Ea = checkArea()
-    if area_Ea == 0 {
-        count = 0
+for i in 1..<N-1 {
+    for j in 1..<M-1 {
+        if graph[i][j] != 0 {
+            ice.insert([i, j])
+        }
+    }
+}
+var year = 0
+while !isSeperate {
+    if ice.count == 0 {
+        year = 0
         break
     }
+    year += 1
+    Melt()
 }
+print(year)
 
-print(count)
 
-func findNotZero() {
-    for i in 0..<n {
-        for j in 0..<m {
-            if graph[i][j] != 0 {
-                notZero.append([i, j])
+var isSeperate: Bool {
+    func bfs(_ y: Int, _ x: Int) {
+        var queue = [(y, x)], idx = 0; isVisit[y][x] = true
+        while idx < queue.count {
+            let (y, x) = queue[idx]; idx += 1
+            for (ny, nx) in [(y+1,x),(y-1,x),(y,x+1),(y,x-1)] {
+                if graph[ny][nx] == 0 { continue }
+                if isVisit[ny][nx] { continue }
+                queue.append((ny, nx))
+                isVisit[ny][nx] = true
             }
         }
     }
-}
 
-
-func makeGraph() {
-    for i in 0..<n {
-        graph[i] = readLine()!.split{$0==" "}.map{Int(String($0))!}
-    }
-}
-
-func oneYearsLater() {
-    cont = [[Int]](repeating: [Int](repeating: 0, count: m), count: n)
-    for i in notZero {
-        if graph[i[0]][i[1]] != 0 {
-            for k in [[-1, 0], [0, -1], [1, 0], [0, 1]] {
-                if graph[i[0]+k[0]][i[1]+k[1]] == 0 {
-                    cont[i[0]][i[1]] += 1
-                }
-            }
-        }
-    }
-    for i in notZero {
-        graph[i[0]][i[1]] -= cont[i[0]][i[1]]
-        if graph[i[0]][i[1]] < 0 {
-            graph[i[0]][i[1]] = 0
-        }
-    }
-}
-
-func checkArea() -> Int {
+    var isVisit = [[Bool]](repeating: [Bool](repeating: false, count: M), count: N)
     var count = 0
-    visit = [[Int]](repeating: [Int](repeating: -1, count: m), count: n)
-    for i in notZero {
-        if visit[i[0]][i[1]] == -1 && graph[i[0]][i[1]] != 0 {
+    for i in ice {
+        let (y, x) = (i[0], i[1])
+        if !isVisit[y][x] {
+            if count == 1 { return true }
             count += 1
-            if count == 2 {
-                return 2
-            }
-            bfs(i[0], i[1])
+            bfs(y, x)
         }
     }
-    return count
+    return false
 }
 
-func bfs(_ i: Int, _ j: Int) {
-    var index = 0
-    var queue = [[i, j]]
-    visit[i][j] = 1
-    while index < queue.count {
-        let (x, y) = (queue[index][0], queue[index][1])
-        for i in [[-1, 0], [0, -1], [1, 0], [0, 1]] {
-            let (nx, ny) = (x+i[0], y+i[1])
-            if (0..<n).contains(nx) && (0..<m).contains(ny)
-                       && visit[nx][ny] == -1 && graph[nx][ny] != 0 {
-                queue.append([nx, ny])
-                visit[nx][ny] = 1
+func Melt() {
+    var result = [[Int]](repeating: [Int](repeating: 0, count: M), count: N)
+    for i in ice {
+        let (y, x) = (i[0], i[1])
+        for (ny, nx) in [(y+1,x),(y-1,x),(y,x-1),(y,x+1)] {
+            if graph[ny][nx] == 0 {
+                result[y][x] += 1
             }
         }
-        index += 1
+    }
+    for i in ice {
+        let (y, x) = (i[0], i[1])
+        graph[y][x] -= result[y][x]
+        if graph[y][x] <= 0 {
+            graph[y][x] = 0
+            ice.remove([y, x])
+        }
     }
 }
+
+func crtGraph() -> [[Int]] {
+    var graph = [[Int]]()
+    for _ in 0..<N {
+        graph.append(readLine()!.split{$0==" "}.map{Int(String($0))!})
+    }
+    return graph
+}
+
