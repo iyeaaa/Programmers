@@ -1,87 +1,130 @@
 import Foundation
 
-var buffer = Array(FileHandle.standardInput.readDataToEndOfFile()), idx = 0
-@inline(__always) func readByte() -> UInt8 {
-    defer { idx += 1 }
-    return buffer[idx]
-}
-@inline(__always) func readInt() -> Int {
-    var number = 0, byte = readByte()
-    while byte == 10 || byte == 32 { byte = readByte() }
-    while 48...57 ~= byte { number = number * 10 + Int(byte-48); byte = readByte() }
-    return number
-}
+final class IO {
+    private let buffer:[UInt8]
+    private var index: Int = 0
 
-let (n, m) = (readInt(), readInt())
-var graph = Array(repeating: Array(repeating: [0, 0], count: m), count: n)
-var visit = Array(repeating: Array(repeating: false, count: m), count: n)
-var zero = [[Int]](), one = [[Int]]()
-var dict: [Int:Int] = [0: 0]
-let direction = [[-1, 0], [0, -1], [1, 0], [0, 1]]
-for i in 0..<n {
-    for j in 0..<m {
-        graph[i][j][0] = readInt()
-        if graph[i][j][0] == 0 {
-            zero.append([i, j])
-        } else {
-            one.append([i, j])
+    init(fileHandle: FileHandle = FileHandle.standardInput) {
+
+        buffer = Array(try! fileHandle.readToEnd()!)+[UInt8(0)] // 인덱스 범위 넘어가는 것 방지
+    }
+
+    @inline(__always) private func read() -> UInt8 {
+        defer { index += 1 }
+
+        return buffer[index]
+    }
+
+    @inline(__always) func readInt() -> Int {
+        var sum = 0
+        var now = read()
+        var isPositive = true
+
+        while now == 10
+                      || now == 32 { now = read() } // 공백과 줄바꿈 무시
+        if now == 45 { isPositive.toggle(); now = read() } // 음수 처리
+        while now >= 48, now <= 57 {
+            sum = sum * 10 + Int(now-48)
+            now = read()
         }
+
+        return sum * (isPositive ? 1:-1)
+    }
+
+    @inline(__always) func readString() -> String {
+        var now = read()
+
+        while now == 10 || now == 32 { now = read() } // 공백과 줄바꿈 무시
+        let beginIndex = index-1
+
+        while now != 10,
+              now != 32,
+              now != 0 { now = read() }
+
+        return String(bytes: Array(buffer[beginIndex..<(index-1)]), encoding: .ascii)!
+    }
+
+    @inline(__always) func readByteSequenceWithoutSpaceAndLineFeed() -> [UInt8] {
+        var now = read()
+
+        while now == 10 || now == 32 { now = read() } // 공백과 줄바꿈 무시
+        let beginIndex = index-1
+
+        while now != 10,
+              now != 32,
+              now != 0 { now = read() }
+
+        return Array(buffer[beginIndex..<(index-1)])
+    }
+
+    @inline(__always) func writeByString(_ output: String) { // wapas
+        FileHandle.standardOutput.write(output.data(using: .utf8)!)
     }
 }
 
-var number = 1
-for o in one {
-    if !visit[o[0]][o[1]] {
-        dict[number] = bfs(o[0], o[1], number)
+
+let io = IO()
+let (N, M) = (io.readInt(), io.readInt())
+var one = [(Int, Int)](), zero = [(Int, Int)]()
+var graph = crtGraph()
+var cntNum = [0]
+
+numbering()
+var maxValue = Int.min
+for (y, x) in zero {
+    var sum = 1, overlap = Set<Int>()
+    for (ny, nx) in [(y+1,x),(y-1,x),(y,x+1),(y,x-1)] {
+        if !((0..<N) ~= ny && (0..<M) ~= nx) { continue }
+        let nextNum = graph[ny][nx]
+        if nextNum == 0 { continue }
+        if overlap.contains(nextNum) { continue }
+        sum += cntNum[nextNum]
+        overlap.insert(nextNum)
+    }
+    maxValue = max(sum, maxValue)
+}
+print(maxValue)
+
+
+func numbering() {
+    var isVisit = [[Bool]](repeating: [Bool](repeating: false, count: M), count: N)
+    var number = 1
+    for (i, j) in one {
+        if isVisit[i][j] { continue }
+        var count = 1
+        var queue = [(i, j)], idx = 0; isVisit[i][j] = true
+        while idx < queue.count {
+            let (y, x) = queue[idx]; idx += 1
+            for (ny, nx) in [(y+1,x),(y-1,x),(y,x+1),(y,x-1)] {
+                if !((0..<N) ~= ny && (0..<M) ~= nx) { continue }
+                if isVisit[ny][nx] || graph[ny][nx] == 0 { continue }
+                queue.append((ny, nx))
+                isVisit[ny][nx] = true
+                count += 1
+            }
+        }
+        for (y, x) in queue {
+            graph[y][x] = number
+        }
+        cntNum.append(count)
         number += 1
     }
 }
 
-var max = Int.min
-for z in zero {
-    var temp = 1
-    var visit = Set([0])
-    for d in direction {
-        let cur = (z[0]+d[0], z[1]+d[1])
-        if (0..<n) ~= cur.0 && (0..<m) ~= cur.1 {
-            let n = graph[cur.0][cur.1][1]
-            if visit.contains(n) {
+func crtGraph() -> [[Int]] {
+    var result = [[Int]](repeating: [Int](repeating: 0, count: M), count: N)
+    for i in 0..<N {
+        for j in 0..<M {
+            result[i][j] = io.readInt()
+            if result[i][j] == 1 {
+                one.append((i, j))
                 continue
             }
-            temp += dict[n]!
-            visit.insert(n)
+            if result[i][j] == 0 {
+                zero.append((i, j))
+            }
         }
     }
-    if max < temp {
-        max = temp
-    }
+    return result
 }
-print(max)
 
-func bfs(_ y: Int, _ x: Int, _ number: Int) -> Int {
-    var count = 1
-    var queue = [(y, x)]
-    var index = 0
-    visit[y][x] = true
-    while index < queue.count {
-        let cur = queue[index]
-        graph[cur.0][cur.1][1] = number
-        for d in direction {
-            let next = (cur.0+d[0], cur.1+d[1])
-            if !((0..<n) ~= next.0 && (0..<m) ~= next.1) {
-                continue
-            }
-            if visit[next.0][next.1] {
-                continue
-            }
-            if graph[next.0][next.1][0] != 1 {
-                continue
-            }
-            queue.append(next)
-            visit[next.0][next.1] = true
-            count += 1
-        }
-        index += 1
-    }
-    return count
-}
