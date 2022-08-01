@@ -1,49 +1,150 @@
 import Foundation
 
-var buffer = Array(FileHandle.standardInput.readDataToEndOfFile()) + [0], idx = 0
-@inline(__always) func readByte() -> UInt8 {
-    defer { idx += 1 }
-    return buffer[idx]
+final class IO {
+    private let buffer:[UInt8]
+    private var index: Int = 0
+
+    init(fileHandle: FileHandle = FileHandle.standardInput) {
+
+        buffer = Array(try! fileHandle.readToEnd()!)+[UInt8(0)] // 인덱스 범위 넘어가는 것 방지
+    }
+
+    @inline(__always) private func read() -> UInt8 {
+        defer { index += 1 }
+
+        return buffer[index]
+    }
+
+    @inline(__always) func readInt() -> Int {
+        var sum = 0
+        var now = read()
+        var isPositive = true
+
+        while now == 10
+                      || now == 32 { now = read() } // 공백과 줄바꿈 무시
+        if now == 45 { isPositive.toggle(); now = read() } // 음수 처리
+        while now >= 48, now <= 57 {
+            sum = sum * 10 + Int(now-48)
+            now = read()
+        }
+
+        return sum * (isPositive ? 1:-1)
+    }
+
+    @inline(__always) func readString() -> String {
+        var now = read()
+
+        while now == 10 || now == 32 { now = read() } // 공백과 줄바꿈 무시
+        let beginIndex = index-1
+
+        while now != 10,
+              now != 32,
+              now != 0 { now = read() }
+
+        return String(bytes: Array(buffer[beginIndex..<(index-1)]), encoding: .ascii)!
+    }
+
+    @inline(__always) func readByteSequenceWithoutSpaceAndLineFeed() -> [UInt8] {
+        var now = read()
+
+        while now == 10 || now == 32 { now = read() } // 공백과 줄바꿈 무시
+        let beginIndex = index-1
+
+        while now != 10,
+              now != 32,
+              now != 0 { now = read() }
+
+        return Array(buffer[beginIndex..<(index-1)])
+    }
+
+    @inline(__always) func writeByString(_ output: String) { // wapas
+        FileHandle.standardOutput.write(output.data(using: .utf8)!)
+    }
 }
-@inline(__always) func readInt() -> Int {
-    var number = 0, byte = readByte()
-    while byte == 10 || byte == 32 { byte = readByte() }
-    while 48...57 ~= byte { number = number * 10 + Int(byte-48); byte = readByte() }
-    return number
-}
-let NOT_VISIT = 0
-let CYCLE_IN = -1
+
+
+let io = IO()
+let NOT_VISITED = 0
+let VISITED = 1
+let CYCLE_IN = 2
+let NOT_CYCLE_IN = 3
 
 var result = ""
-for _ in 0..<readInt() {
-    let n = readInt()
-    var count = 0
-    var graph = [0]; for _ in 0..<n { graph.append(readInt()) }
-    var state = [Int](repeating: 0, count: n+1)
-    for i in 1...n {
-        if state[i] == NOT_VISIT { run(i) }
-    }
-    for i in 1...n {
-        if state[i] != CYCLE_IN { count += 1 }
-    }
-    result += "\(count)\n"
+for _ in 0..<io.readInt() {
+    result += "\(solve())\n"
+}
+print(result)
+
+func solve() -> Int {
 
     func run(_ x: Int) {
         var cur = x
         while true {
-            state[cur] = x
-            cur = graph[cur]
-            if state[cur] == x {
-                while state[cur] != CYCLE_IN {
-                    state[cur] = CYCLE_IN
-                    cur = graph[cur]
+            state[cur] = VISITED
+            cur = list[cur]
+
+            if state[cur] == CYCLE_IN || state[cur] == NOT_CYCLE_IN {
+                cur = x
+                while state[cur] == VISITED {
+                    state[cur] = NOT_CYCLE_IN
+                    cur = list[cur]
                 }
                 return
-            } else if state[cur] != 0 {
+            }
+
+            if state[cur] == VISITED && cur != x {
+                while state[cur] != CYCLE_IN {
+                    state[cur] = CYCLE_IN
+                    cur = list[cur]
+                }
+                cur = x
+                while state[cur] != CYCLE_IN {
+                    state[cur] = NOT_CYCLE_IN
+                    cur = list[cur]
+                }
+                return
+            }
+
+            if state[cur] == VISITED && cur == x {
+                while state[cur] != CYCLE_IN {
+                    state[cur] = CYCLE_IN
+                    cur = list[cur]
+                }
                 return
             }
         }
     }
+
+    let N = io.readInt()
+    let list = crtList(N)
+    var state = [Int](repeating: 0, count: N+1)
+
+    for i in 1...N {
+        if state[i] == NOT_VISITED {
+            run(i)
+        }
+    }
+
+    var count = 0
+    for i in 1...N {
+        if state[i] == NOT_CYCLE_IN {
+            count += 1
+        }
+    }
+
+    return count
+
+
+
 }
 
-print(result)
+
+func crtList(_ N: Int) -> [Int] {
+    var result = [0]
+    for _ in 0..<N {
+        result.append(io.readInt())
+    }
+    return result
+}
+
+
