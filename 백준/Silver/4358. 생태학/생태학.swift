@@ -1,15 +1,14 @@
 import Foundation
 
-var dict = [String: Double]()
-var sum = 0.0
-
-while let input = readLine() {
-    dict[input, default: 0] += 1
+var nameToCnt = [String: Double]()
+var sum: Double = 0
+while let name = readLine() {
+    nameToCnt[name, default: 0] += 1
     sum += 1
 }
 
 var result = ""
-for k in dict.keys.sorted() {
-    result += k + " \(String(format: "%.4f", dict[k]!/sum*100))\n"
+for (name, count) in nameToCnt.sorted(by: {$0.key < $1.key}) {
+    result += name + " \(String(format: "%.4f", count*100/sum))\n"
 }
 print(result)
