@@ -1,18 +1,20 @@
 import Foundation
 
-final class FileIO {
-    private var buffer:[UInt8]
-    private var index: Int
+final class IO {
+    private let buffer:[UInt8]
+    private var index: Int = 0
+
     init(fileHandle: FileHandle = FileHandle.standardInput) {
-        buffer = Array(fileHandle.readDataToEndOfFile())+[UInt8(0)] // 인덱스 범위 넘어가는 것 방지
-        index = 0
+
+        buffer = Array(try! fileHandle.readToEnd()!)+[UInt8(0)] // 인덱스 범위 넘어가는 것 방지
     }
+
     @inline(__always) private func read() -> UInt8 {
         defer { index += 1 }
 
-        return buffer.withUnsafeBufferPointer { $0[index] }
+        return buffer[index]
     }
-    @discardableResult
+
     @inline(__always) func readInt() -> Int {
         var sum = 0
         var now = read()
@@ -20,7 +22,7 @@ final class FileIO {
 
         while now == 10
                       || now == 32 { now = read() } // 공백과 줄바꿈 무시
-        if now == 45{ isPositive.toggle(); now = read() } // 음수 처리
+        if now == 45 { isPositive.toggle(); now = read() } // 음수 처리
         while now >= 48, now <= 57 {
             sum = sum * 10 + Int(now-48)
             now = read()
@@ -28,197 +30,238 @@ final class FileIO {
 
         return sum * (isPositive ? 1:-1)
     }
+
     @inline(__always) func readString() -> String {
-        var str = ""
         var now = read()
 
-        while now == 10
-                      || now == 32 { now = read() } // 공백과 줄바꿈 무시
+        while now == 10 || now == 32 { now = read() } // 공백과 줄바꿈 무시
+        let beginIndex = index-1
 
-        while now != 10
-                      && now != 32 && now != 0 {
-            str += String(bytes: [now], encoding: .ascii)!
-            now = read()
-        }
+        while now != 10,
+              now != 32,
+              now != 0 { now = read() }
 
-        return str
+        return String(bytes: Array(buffer[beginIndex..<(index-1)]), encoding: .ascii)!
+    }
+
+    @inline(__always) func readByteSequenceWithoutSpaceAndLineFeed() -> [UInt8] {
+        var now = read()
+
+        while now == 10 || now == 32 { now = read() } // 공백과 줄바꿈 무시
+        let beginIndex = index-1
+
+        while now != 10,
+              now != 32,
+              now != 0 { now = read() }
+
+        return Array(buffer[beginIndex..<(index-1)])
+    }
+
+    @inline(__always) func writeByString(_ output: String) { // wapas
+        FileHandle.standardOutput.write(output.data(using: .utf8)!)
     }
 }
 
-struct MaxHeap<T: Comparable> {
-    var heap = [T]()
+struct DualHeap<T: Comparable & Hashable> {
+    struct MaxHeap<T: Comparable> {
+        var heap = [T]()
 
-    init() {}
-    init(_ h: T) { heap.append(h); heap.append(h) }
+        init() {}
+        init(_ h: T) { heap.append(h); heap.append(h) }
 
-    var isEmpty: Bool { heap.count <= 1 }
+        var isEmpty: Bool { heap.count <= 1 }
+
+        var first: T? { isEmpty ? nil : heap[1] }
+
+        mutating func insert(_ h: T) {
+            heap.append(h)
+            if isEmpty { heap.append(h) }
+            var isrt = heap.count-1
+            while isrt > 1 && heap[isrt] > heap[isrt/2] {
+                heap.swapAt(isrt, isrt/2)
+                isrt /= 2
+            }
+        }
+
+        enum Direction { case none, lf, ryt }
+        mutating func pop() -> T? {
+            func haveToDown(_ pop: Int) -> Direction {
+                let lf = pop*2, ryt = lf+1
+                while lf >= heap.count { return .none }
+                while ryt >= heap.count {
+                    return heap[lf] > heap[pop] ? .lf : .none
+                }
+                if heap[lf] <= heap[pop] && heap[ryt] <= heap[pop] {
+                    return .none
+                }
+                if heap[lf] > heap[pop] && heap[ryt] > heap[pop] {
+                    return heap[lf] > heap[ryt] ? .lf : .ryt
+                }
+                return heap[lf] > heap[pop] ? .lf : .ryt
+            }
+            if isEmpty { return nil }
+            heap.swapAt(1, heap.count-1)
+            let returnData = heap.popLast()!
+
+            var pop = 1
+            while true {
+                switch haveToDown(pop) {
+                case .none:
+                    return returnData
+                case .lf:
+                    heap.swapAt(pop, pop*2)
+                    pop *= 2
+                case .ryt:
+                    heap.swapAt(pop, pop*2+1)
+                    pop = pop*2 + 1
+                }
+            }
+        }
+    }
+
+    struct MinHeap<T: Comparable> {
+        var heap = [T]()
+
+        init() {}
+        init(_ h: T) { heap.append(h); heap.append(h) }
+
+        var isEmpty: Bool { heap.count <= 1 }
+
+        var first: T? { isEmpty ? nil : heap[1] }
+
+        mutating func insert(_ h: T) {
+            heap.append(h)
+            if isEmpty { heap.append(h) }
+            var isrt = heap.count-1
+            while isrt > 1 && heap[isrt] < heap[isrt/2] {
+                heap.swapAt(isrt, isrt/2)
+                isrt /= 2
+            }
+        }
+
+        enum Direction { case none, lf, ryt }
+        mutating func pop() -> T? {
+            func haveToDown(_ pop: Int) -> Direction {
+                let lf = pop*2, ryt = lf+1
+                while lf >= heap.count { return .none }
+                while ryt >= heap.count {
+                    return heap[lf] < heap[pop] ? .lf : .none
+                }
+                if heap[lf] >= heap[pop] && heap[ryt] >= heap[pop] {
+                    return .none
+                }
+                if heap[lf] < heap[pop] && heap[ryt] < heap[pop] {
+                    return heap[lf] < heap[ryt] ? .lf : .ryt
+                }
+                return heap[lf] < heap[pop] ? .lf : .ryt
+            }
+            if isEmpty { return nil }
+            heap.swapAt(1, heap.count-1)
+            let returnData = heap.popLast()!
+
+            var pop = 1
+            while true {
+                switch haveToDown(pop) {
+                case .none:
+                    return returnData
+                case .lf:
+                    heap.swapAt(pop, pop*2)
+                    pop *= 2
+                case .ryt:
+                    heap.swapAt(pop, pop*2+1)
+                    pop = pop*2 + 1
+                }
+            }
+        }
+    }
+
+    var maxHeap = MaxHeap<T>()
+    var minHeap = MinHeap<T>()
+    var count = [T: Int]()
+
+    init(){}
+
+    mutating func isEmpty() -> Bool {
+        while let top = maxHeap.first {
+            if count[top, default: 0] > 0 {
+                break
+            }
+            count.removeValue(forKey: top)
+            _ = maxHeap.pop()
+        }
+        while let top = minHeap.first {
+            if count[top, default: 0] > 0 {
+                break
+            }
+            count.removeValue(forKey: top)
+            _ = minHeap.pop()
+        }
+        return maxHeap.isEmpty
+    }
 
     mutating func insert(_ h: T) {
-        func haveToUp(_ insertIdx: Int) -> Bool {
-            if insertIdx <= 1 { return false }
-            return heap[insertIdx] > heap[insertIdx/2]
-        }
-
-        heap.append(h);
-        if heap.count == 1 { heap.append(h); return }
-
-        var insertIdx = heap.count-1
-        while haveToUp(insertIdx) {
-            let prntIdx = insertIdx / 2
-            heap.swapAt(insertIdx, prntIdx)
-            insertIdx = prntIdx
-        }
+        maxHeap.insert(h)
+        minHeap.insert(h)
+        count[h, default: 0] += 1
     }
 
-    enum Direction { case none, lf, ryt }
-    @discardableResult
-    mutating func pop() -> T? {
-        func haveToDown(_ popIdx: Int) -> Direction {
-            let lfChlIdx = popIdx*2
-            let rytChlIdx = lfChlIdx+1
-            if lfChlIdx >= heap.count { return .none }
-            if rytChlIdx >= heap.count {
-                return heap[lfChlIdx] > heap[popIdx] ? .lf : .none
+    mutating func maxPop() -> T? {
+        while let top = maxHeap.first {
+            if count[top, default: 0] > 0 {
+                break
             }
-            if heap[lfChlIdx] <= heap[popIdx] && heap[rytChlIdx] <= heap[popIdx] {
-                return .none
-            }
-            if heap[lfChlIdx] > heap[popIdx] && heap[rytChlIdx] > heap[popIdx] {
-                return heap[lfChlIdx] > heap[rytChlIdx] ? .lf : .ryt
-            }
-            return heap[lfChlIdx] > heap[popIdx] ? .lf : .ryt
+            count.removeValue(forKey: top)
+            _ = maxHeap.pop()
         }
-
-        if isEmpty { return nil }
-        heap.swapAt(1, heap.count-1)
-        let returnData = heap.popLast()!
-
-        var popIdx = 1
-        while true {
-            switch haveToDown(popIdx) {
-            case .none:
-                return returnData
-            case .lf:
-                let chlIdx = popIdx*2
-                heap.swapAt(chlIdx, popIdx)
-                popIdx = chlIdx
-            case .ryt:
-                let chlIdx = popIdx*2 + 1
-                heap.swapAt(chlIdx, popIdx)
-                popIdx = chlIdx
-            }
+        if maxHeap.isEmpty {
+            return nil
         }
-    }
-}
-struct MinHeap<T: Comparable> {
-    var heap = [T]()
-
-    init() {}
-    init(_ h: T) { heap.append(h); heap.append(h) }
-
-    var isEmpty: Bool { heap.count <= 1 }
-
-    mutating func insert(_ h: T) {
-        func haveToUp(_ insertIdx: Int) -> Bool {
-            if insertIdx <= 1 { return false }
-            return heap[insertIdx] < heap[insertIdx/2]
-        }
-
-        heap.append(h);
-        if heap.count == 1 { heap.append(h); return }
-
-        var insertIdx = heap.count-1
-        while haveToUp(insertIdx) {
-            let prntIdx = insertIdx / 2
-            heap.swapAt(insertIdx, prntIdx)
-            insertIdx = prntIdx
-        }
+        count[maxHeap.first!, default: 0] -= 1
+        return maxHeap.pop()
     }
 
-    enum Direction { case none, lf, ryt }
-    @discardableResult
-    mutating func pop() -> T? {
-        func haveToDown(_ popIdx: Int) -> Direction {
-            let lfChlIdx = popIdx*2
-            let rytChlIdx = lfChlIdx+1
-            if lfChlIdx >= heap.count { return .none }
-            if rytChlIdx >= heap.count {
-                return heap[lfChlIdx] < heap[popIdx] ? .lf : .none
+    mutating func minPop() -> T? {
+        while let top = minHeap.first {
+            if count[top, default: 0] > 0 {
+                break
             }
-            if heap[lfChlIdx] >= heap[popIdx] && heap[rytChlIdx] >= heap[popIdx] {
-                return .none
-            }
-            if heap[lfChlIdx] < heap[popIdx] && heap[rytChlIdx] < heap[popIdx] {
-                return heap[lfChlIdx] < heap[rytChlIdx] ? .lf : .ryt
-            }
-            return heap[lfChlIdx] < heap[popIdx] ? .lf : .ryt
+            count.removeValue(forKey: top)
+            _ = minHeap.pop()
         }
-
-        if isEmpty { return nil }
-
-        heap.swapAt(1, heap.count-1)
-        let returnData = heap.popLast()!
-
-        var popIdx = 1
-        while true {
-            switch haveToDown(popIdx) {
-            case .none:
-                return returnData
-            case .lf:
-                let chlIdx = popIdx*2
-                heap.swapAt(chlIdx, popIdx)
-                popIdx = chlIdx
-            case .ryt:
-                let chlIdx = popIdx*2 + 1
-                heap.swapAt(chlIdx, popIdx)
-                popIdx = chlIdx
-            }
+        if minHeap.isEmpty {
+            return nil
         }
+        count[minHeap.first!, default: 0] -= 1
+        return minHeap.pop()
     }
 }
 
-let file = FileIO()
 
-for _ in 0..<file.readInt() {
-    var maxHeap = MaxHeap<Int>()
-    var minHeap = MinHeap<Int>()
-    var popped = [Int: Int]()
-    var count = 0
+let io = IO()
+let T = io.readInt()
 
-    for _ in 0..<file.readInt() {
-        if file.readString() == "I" {
-            let x = file.readInt()
-            maxHeap.insert(x)
-            minHeap.insert(x)
-            popped[x, default: 0] += 1
+var result = ""
+for _ in 0..<T {
+    let k = io.readInt()
+    var dualHeap = DualHeap<Int>()
+
+    for _ in 0..<k {
+        if io.readString() == "I" {
+            dualHeap.insert(io.readInt())
         } else {
-            file.readInt() == 1 ? maxPop() : minPop()
+            if io.readInt() == 1 {
+                _ = dualHeap.maxPop()
+            } else {
+                _ = dualHeap.minPop()
+            }
         }
     }
 
-    func maxPop() {
-        while let p = maxHeap.pop() {
-            if popped[p]! > 0 { popped[p]! -= 1 ; break }
-        }
-    }
-
-    func minPop() {
-        while let p = minHeap.pop() {
-            if popped[p]! > 0 { popped[p]! -= 1; break }
-        }
-    }
-
-    var maxValue = Int.max
-    while let p = maxHeap.pop() {
-        if popped[p]! > 0 { maxValue = p; break }
-    }
-    var minValue = Int.max
-    while let p = minHeap.pop() {
-        if popped[p]! > 0 { minValue = p; break }
-    }
-    if maxValue == Int.max || minValue == Int.max {
-        print("EMPTY")
+    if dualHeap.isEmpty() {
+        result += "EMPTY\n"
     } else {
-        print(maxValue, minValue)
+        result += "\(dualHeap.maxHeap.first!) \(dualHeap.minHeap.first!)\n"
     }
 }
+
+print(result)
