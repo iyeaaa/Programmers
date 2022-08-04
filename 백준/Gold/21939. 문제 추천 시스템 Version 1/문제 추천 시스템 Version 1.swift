@@ -268,13 +268,9 @@ struct DualHeap<T: Comparable & Hashable> {
     }
 }
 
-struct Problem: Comparable & Hashable & Equatable {
+struct Problem: Comparable & Hashable {
     static func <(lhs: Problem, rhs: Problem) -> Bool {
         lhs.L != rhs.L ? lhs.L < rhs.L : lhs.P < rhs.P
-    }
-
-    static func ==(lhs: Problem, rhs: Problem) -> Bool {
-        lhs.L == rhs.L && lhs.P == rhs.P
     }
 
     let L: Int
@@ -310,8 +306,7 @@ for _ in 0..<M {
         dualHeap.insert(problem)
         pToProblem[P] = problem
     case "solved":
-        let x = io.readInt()
-        dualHeap.remove(pToProblem[x]!)
+        dualHeap.remove(pToProblem[io.readInt()]!)
     default:
         break;
     }
