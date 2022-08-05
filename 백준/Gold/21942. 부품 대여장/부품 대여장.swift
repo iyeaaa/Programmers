@@ -59,49 +59,42 @@ final class IO {
 }
 
 let io = IO()
-
-let (N, L, F) = (io.readInt(), io.readString(), io.readInt())
-let LList = L.components(separatedBy: ["/", ":"]).map{Int($0)!}
-let L_minutes = LList[0]*24*60 + LList[1]*60 + LList[2]
-
-var dict = [String: Int]()
-var nameToCost = [String: Int]()
+let N = io.readInt()
+let L = io.readString().components(separatedBy: ["/", ":"]).map{Int(String($0))!}
+let F = io.readInt()
+let fineTime = cvtToMnt([1]+L)
+var imfo = [String: [Int]]()
+var nickToMny = [String: Int]()
 
 for _ in 0..<N {
-    let ymd = io.readString()
-    let hm = io.readString()
-    let object = io.readString()
-    let name = io.readString()
-    let key = name + " " + object
-    let cvtedMnt = cvtToMinutes(ymd, hm)
+    var input = io.readString().split(separator: "-").map{Int(String($0))!}
+    let (MM, dd) = (input[1], input[2])
+    input = io.readString().split(separator: ":").map{Int(String($0))!}
+    let (hh, mm) = (input[0], input[1])
+    let (P, M) = (io.readString(), io.readString())
+    let key = M+" "+P
 
-    if let preMnt = dict[key] {
-        let differ = cvtedMnt - preMnt
-        if differ > L_minutes {
-            nameToCost[name, default: 0] += (differ - L_minutes)*F
-        }
-        dict[key] = nil
+    if let time = imfo[key] {
+        imfo[key] = nil
+        let fine = timeClct(time, [MM, dd, hh, mm])
+        if fine == 0 { continue }
+        nickToMny[M, default: 0] += fine
     } else {
-        dict[key] = cvtedMnt
+        imfo[key] = [MM, dd, hh, mm]
     }
 }
 
-if nameToCost.isEmpty { print(-1) }
-else {
-    var answer = ""
-    for (k, v) in nameToCost.sorted(by: {$0.key < $1.key}) {
-        answer += "\(k) \(v)\n"
-    }
-    print(answer)
+if nickToMny.isEmpty { print(-1) }
+else {print(nickToMny.sorted{$0.key<$1.key}.map{$0.key+" \($0.value)\n"}.joined())}
+
+func cvtToMnt(_ time: [Int]) -> Int {
+    let (MM, dd, hh, mm) = (time[0], time[1], time[2], time[3])
+    let monthToDay = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    return (dd + monthToDay[1..<MM].reduce(0, +))*24*60 + hh*60 + mm
 }
 
-func cvtToMinutes(_ md: String, _ hm: String) -> Int {
-    let month = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-    let mdList = md.components(separatedBy: "-").map{Int($0)!}
-    let hmList = hm.components(separatedBy: ":").map{Int($0)!}
-    return (month[1..<mdList[1]].reduce(0, +) + mdList[2])*60*24 +
-            hmList[0]*60 + hmList[1]
+func timeClct(_ start: [Int], _ end: [Int]) -> Int {
+    let brwTime = cvtToMnt(end) - cvtToMnt(start)
+    let haveToFine = brwTime > fineTime
+    return haveToFine ? (brwTime-fineTime)*F : 0
 }
-
-
-
