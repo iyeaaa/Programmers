@@ -71,6 +71,4 @@ for _ in 0..<N {
     numToCnt[io.readInt(), default: 0] += 1
 }
 
-let list = numToCnt.sorted{$0.value !=  $1.value ? $0.value > $1.value : $0.key < $1.key}
-
-print(list[0].key)
+print(numToCnt.max{$0.value != $1.value ? $0.value < $1.value : $0.key > $1.key}!.key)
