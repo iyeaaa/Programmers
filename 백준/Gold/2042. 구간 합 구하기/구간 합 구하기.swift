@@ -69,7 +69,7 @@ func makeTree(_ node: Int, _ start: Int, _ end: Int) -> Int {
         tree[node] = a[start]
     } else {
         let mid = (start+end)/2
-        tree[node] = makeTree(node*2, start, mid) &+ makeTree(node*2+1, mid+1, end)
+        tree[node] = makeTree(node*2, start, mid) + makeTree(node*2+1, mid+1, end)
     }
     return tree[node]
 }
@@ -82,7 +82,7 @@ func sum(_ node: Int, _ start: Int, _ end: Int, _ lf: Int, _ ryt: Int) -> Int {
         return tree[node]
     }
     let mid = (start + end) / 2
-    return sum(node*2, start, mid, lf, ryt) &+ sum(node*2+1, mid+1, end, lf, ryt)
+    return sum(node*2, start, mid, lf, ryt) + sum(node*2+1, mid+1, end, lf, ryt)
 }
 
 func updata(_ node: Int, _ start: Int, _ end: Int, _ index: Int, _ diff: Int) {
