@@ -85,14 +85,17 @@ func sum(_ node: Int, _ start: Int, _ end: Int, _ lf: Int, _ ryt: Int) -> Int {
     return sum(node*2, start, mid, lf, ryt) + sum(node*2+1, mid+1, end, lf, ryt)
 }
 
-func updata(_ node: Int, _ start: Int, _ end: Int, _ index: Int, _ diff: Int) {
-    if index < start || index > end { return }
-    tree[node] += diff
-    let mid = (start+end)/2
-    if start != end {
-        updata(node*2, start, mid, index, diff)
-        updata(node*2+1, mid+1, end, index, diff)
+@discardableResult
+func updata(_ node: Int, _ start: Int, _ end: Int, _ index: Int, _ updtValue: Int) -> Int {
+    if start == end {
+        if start == index { tree[node] = updtValue }
+        return tree[node]
     }
+    guard (start...end) ~= index else { return tree[node] }
+    let mid = (start + end) / 2
+    tree[node] = updata(node*2, start, mid, index, updtValue)
+            + updata(node*2+1, mid+1, end, index, updtValue)
+    return tree[node]
 }
 
 
@@ -109,10 +112,9 @@ var result = ""
 for _ in 0..<M+K {
     let x = io.readInt()
     if x == 1 {
-        let (y, z) = (io.readInt()-1, io.readInt())
-        let diff = z - a[y]
-        a[y] = z
-        updata(1, 0, N-1, y, diff)
+        let (index, updt) = (io.readInt()-1, io.readInt())
+        a[index] = updt
+        updata(1, 0, N-1, index, updt)
     } else {
         result += "\(sum(1, 0, N-1, io.readInt()-1, io.readInt()-1))\n"
     }
