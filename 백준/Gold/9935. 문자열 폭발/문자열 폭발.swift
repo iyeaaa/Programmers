@@ -6,7 +6,7 @@ for c in strn {
     stack.append(c)
     let stackCnt = stack.count
     if stack.last! != bombLast { continue }
-    if stack.count >= bomb.count && stack[(stackCnt-bombCnt)...].joined() == bomb {
+    if stackCnt >= bombCnt && stack[(stackCnt-bombCnt)...].joined() == bomb {
         for _ in 0..<bombCnt {
             stack.removeLast()
         }
