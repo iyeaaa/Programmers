@@ -65,21 +65,18 @@ final class IO {
 
 let io = IO()
 let N = io.readInt()
-var h = [(Int, Int)]()
 var stack = [(Int, Int)]()
 var pairCnt = 0
 
 for _ in 0..<N {
-    h.append((io.readInt(), 1))
-}
-
-for i in stride(from: N-1, through: 0, by: -1) {
-    while let last = stack.last, last.0 <= h[i].0 {
-        if last.0 == h[i].0 { h[i].1 += last.1 }
+    let cur = io.readInt()
+    var cnt = 1
+    while let last = stack.last, last.0 <= cur {
+        if last.0 == cur { cnt += last.1 }
         pairCnt += stack.popLast()!.1
     }
     pairCnt += (stack.isEmpty ? 0 : 1)
-    stack.append(h[i])
+    stack.append((cur, cnt))
 }
 
 print(pairCnt)
