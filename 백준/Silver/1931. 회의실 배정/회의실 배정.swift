@@ -75,10 +75,8 @@ dc.sort{$0.1 != $1.1 ? $0.1 < $1.1 : $0.0 < $1.0}
 
 var count = 0
 var end = 0
-for (s, e) in dc {
-    if s >= end {
-        count += 1
-        end = e
-    }
+for (s, e) in dc where end <= s {
+    count += 1
+    end = e
 }
 print(count)
