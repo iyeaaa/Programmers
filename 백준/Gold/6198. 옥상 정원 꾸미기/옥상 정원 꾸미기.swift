@@ -65,16 +65,15 @@ final class IO {
 
 let io = IO()
 let N = io.readInt()
-var h = [(Int, Int)](); for _ in 0..<N { h.append((io.readInt(), 0)) }
-var stack = [(Int, Int)]()
-
+var h = [Int](); for _ in 0..<N { h.append(io.readInt()) }
+var stack = [Int]()
 var count = 0
-for i in stride(from: N-1, through: 0, by: -1) {
-    while !stack.isEmpty && stack.last!.0 < h[i].0 {
-        h[i].1 += stack.last!.1 + 1
+
+for i in 0..<N {
+    while let last = stack.last, last <= h[i] {
         stack.removeLast()
     }
-    count += h[i].1
+    count += stack.count
     stack.append(h[i])
 }
 
