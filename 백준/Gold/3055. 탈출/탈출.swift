@@ -34,16 +34,14 @@ while idx < q.count {
         if g[y][x] == "*" {
             if g[ny][nx] == "D" { continue }
             g[ny][nx] = "*"
-            q.append((ny, nx, cnt+1))
-            v[ny][nx] = true
         } else if g[ny][nx] != "*" {
             if g[ny][nx] == "D" {
                 print(cnt+1)
                 exit(0)
             }
-            q.append((ny, nx, cnt+1))
-            v[ny][nx] = true
         }
+        q.append((ny, nx, cnt+1))
+        v[ny][nx] = true
     }
 }
 
