@@ -1,68 +1,4 @@
 
-import Foundation
-
-final class IO {
-    private let buffer:[UInt8]
-    private var index: Int = 0
-
-    init(fileHandle: FileHandle = FileHandle.standardInput) {
-
-        buffer = Array(try! fileHandle.readToEnd()!)+[UInt8(0)] // 인덱스 범위 넘어가는 것 방지
-    }
-
-    @inline(__always) private func read() -> UInt8 {
-        defer { index += 1 }
-
-        return buffer[index]
-    }
-
-    @inline(__always) func readInt() -> Int {
-        var sum = 0
-        var now = read()
-        var isPositive = true
-
-        while now == 10
-                      || now == 32 { now = read() } // 공백과 줄바꿈 무시
-        if now == 45 { isPositive.toggle(); now = read() } // 음수 처리
-        while now >= 48, now <= 57 {
-            sum = sum * 10 + Int(now-48)
-            now = read()
-        }
-
-        return sum * (isPositive ? 1:-1)
-    }
-
-    @inline(__always) func readString() -> String {
-        var now = read()
-
-        while now == 10 || now == 32 { now = read() } // 공백과 줄바꿈 무시
-        let beginIndex = index-1
-
-        while now != 10,
-              now != 32,
-              now != 0 { now = read() }
-
-        return String(bytes: Array(buffer[beginIndex..<(index-1)]), encoding: .ascii)!
-    }
-
-    @inline(__always) func readByteSequenceWithoutSpaceAndLineFeed() -> [UInt8] {
-        var now = read()
-
-        while now == 10 || now == 32 { now = read() } // 공백과 줄바꿈 무시
-        let beginIndex = index-1
-
-        while now != 10,
-              now != 32,
-              now != 0 { now = read() }
-
-        return Array(buffer[beginIndex..<(index-1)])
-    }
-
-    @inline(__always) func writeByString(_ output: String) { // wapas
-        FileHandle.standardOutput.write(output.data(using: .utf8)!)
-    }
-}
-
 struct pair: Hashable {
     let y: Int, x: Int
     init(_ y: Int, _ x: Int) {
@@ -85,16 +21,16 @@ func findOutAir(_ y: Int, _ x: Int) {
     }
 }
 
-let io = IO()
 let dy = [-1, 0, 1, 0], dx = [0, 1, 0, -1]
-let (n, m) = (io.readInt(), io.readInt())
-var g = [[Int]](repeating: [Int](repeating: 0, count: m), count: n)
+let input = readLine()!.split{$0==" "}.map{Int(String($0))!}
+let (n, m) = (input[0], input[1])
+var g = [[Int]]()
 var s = Set<pair>()
 var v = [[Bool]](repeating: [Bool](repeating: false, count: m), count: n)
 
 for i in 0..<n {
+    g.append(readLine()!.split{$0==" "}.map{Int(String($0))!})
     for j in 0..<m {
-        g[i][j] = io.readInt()
         if g[i][j] == 1 {
             s.insert(pair(i, j))
         }
