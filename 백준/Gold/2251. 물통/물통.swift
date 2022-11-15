@@ -1,5 +1,5 @@
 
-// T.C = 200^3*8 + 200^3 < 1e8
+// T.C = 200^3*6 + 200^3 < 1e8
 
 let input = readLine()!.split{$0==" "}.map{Int(String($0))!}
 let (A, B, C) = (input[0], input[1], input[2])
