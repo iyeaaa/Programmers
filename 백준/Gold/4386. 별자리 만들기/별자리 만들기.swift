@@ -46,8 +46,11 @@ for i in 1...n {
     }
 }
 
-for (a, b, cost) in edge.sorted(by: {$0.2 < $1.2}) where !uf.isUni(a, b) {
-    ans += cost; uf.uni(a, b)
+edge.sort{$0.2 < $1.2}
+for i in 0..<edge.count {
+    let (a, b, cost) = edge[i]
+    if uf.isUni(a, b) { continue }
+    uf.uni(a, b); ans += cost
 }
 
 print(ans)
