@@ -1,4 +1,3 @@
-
 import Foundation
 
 struct Disjoint_Set {
@@ -28,15 +27,14 @@ struct Disjoint_Set {
     }
 }
 
-func calculate(_ a: (Double, Double), _ b: (Double, Double)) -> Double {
+func dist(_ a: (Double, Double), _ b: (Double, Double)) -> Double {
     sqrt((a.0-b.0)*(a.0-b.0) + (a.1-b.1)*(a.1-b.1))
 }
 
 let input = readLine()!.split{$0==" "}.map{Int(String($0))!}
 let n = input[0], m = input[1]
 var g = [(0.0, 0.0)]
-var edge = [(Int, Int)]()
-var dist = [[Double]](repeating: [Double](repeating: 9999.0, count: n+1), count: n+1)
+var edge = [(Int, Int, Double)]()
 var uf = Disjoint_Set(n+1)
 var ans = 0.0
 
@@ -44,22 +42,20 @@ for i in 1...n {
     let input = readLine()!.split{$0==" "}.map{Double(String($0))!}
     g.append((input[0], input[1]))
     for j in 1..<i {
-        edge.append((i, j))
-        dist[i][j] = calculate(g[i], g[j])
+        edge.append((i, j, dist(g[i], g[j])))
     }
 }
 
 for _ in 1...m {
     let input = readLine()!.split{$0==" "}.map{Int(String($0))!}
-    let b = input.min()!, a = input.max()!
-    uf.uni(a, b)
+    uf.uni(input[0], input[1])
 }
 
-edge.sort{dist[$0.0][$0.1] < dist[$1.0][$1.1]}
+edge.sort{$0.2 < $1.2}
 for i in 0..<edge.count {
-    let (a, b) = edge[i]
+    let (a, b, cost) = edge[i]
     if uf.isUni(a, b) { continue }
-    uf.uni(a, b); ans += dist[a][b]
+    uf.uni(a, b); ans += cost
 }
 
 print(String(format: "%0.2f", ans))
