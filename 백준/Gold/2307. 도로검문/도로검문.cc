@@ -1,5 +1,5 @@
 
-// T.C: O(M*logN)*M = 5000*3*5000 < 1e8
+// T.C: O(M*logN)*N = 5000*3*1000 < 1e8
 
 #include <iostream>
 #include <cstring>
