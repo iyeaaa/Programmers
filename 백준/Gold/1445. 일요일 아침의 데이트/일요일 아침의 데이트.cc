@@ -1,6 +1,4 @@
 
-// T.C: O(M*N*4log(M*N))*N*M = O(N^2logN)*N^2 < 1e8
-
 #include <iostream>
 #include <algorithm>
 #include <queue>
