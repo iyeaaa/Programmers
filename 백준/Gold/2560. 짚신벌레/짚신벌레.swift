@@ -1,4 +1,5 @@
 
+// k-(b-1) ~ k-a
 
 let MOD = 1000
 let input = readLine()!.split{$0==" "}.map{Int(String($0))!}
@@ -7,7 +8,7 @@ var P = [Int](repeating: 0, count: n+1); P[0]=1
 
 for i in 1...n {
     P[i] = P[i-1]
-    if i >= a { P[i] = (P[i]+P[i-a]+MOD) % MOD }
+    if i >= a { P[i] = (P[i]+P[i-a]) % MOD }
     if i >= b { P[i] = (P[i]-P[i-b]+MOD) % MOD }
 }
 
