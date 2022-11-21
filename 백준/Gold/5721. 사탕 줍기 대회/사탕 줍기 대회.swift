@@ -22,7 +22,6 @@ while true {
     var column_dp = [[Int]](repeating: [Int](repeating: -1, count: n), count: m)
     var row_dp = [Int](repeating: -1, count: m)
     var g = [[Int]]()
-    var rtn = 0
 
     if m == 0 && n == 0 { break }
 
@@ -30,11 +29,7 @@ while true {
         g.append(readLine()!.split{$0==" "}.map{Int(String($0))!})
     }
 
-    for i in 0..<m {
-        rtn = max(rtn, row_max(i))
-    }
-
-    ans += "\(rtn)\n"
+    ans += "\(max(row_max(m-1), row_max(m-2)))\n"
 }
 
 print(ans)
