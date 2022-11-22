@@ -1,3 +1,4 @@
+
 var graph = (0...8).map{ _ in (0..<8).map{ _ in (0..<8).map{ _ in Character(".") } } }
 for i in 0..<8 {
     let input = Array(readLine()!)

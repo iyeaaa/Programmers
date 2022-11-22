@@ -1,4 +1,4 @@
-# [Gold IV] 움직이는 미로 탈출 - 16954 
+# [Gold III] 움직이는 미로 탈출 - 16954 
 
 [문제 링크](https://www.acmicpc.net/problem/16954) 
 
