@@ -7,12 +7,12 @@ var ansElmt = [0, 0, 0]
 for mid in 0..<n {
     var lf = mid+1, ryt = n-1
     while lf < ryt {
-        let dist = abs(l[lf] + l[ryt] + l[mid])
-        if md > dist {
-            md = dist;
+        let sum = l[lf] + l[ryt] + l[mid]
+        if md > abs(sum) {
+            md = abs(sum);
             ansElmt = [l[mid], l[lf], l[ryt]]
         }
-        if l[lf] + l[ryt] + l[mid] < 0 {
+        if sum < 0 {
             lf += 1
         } else {
             ryt -= 1
