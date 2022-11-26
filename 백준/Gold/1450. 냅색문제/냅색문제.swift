@@ -8,10 +8,7 @@ var ans = 0
 C(1, 0, HALF, &l1); l1.sort()
 C(HALF+1, 0, N, &l2); l2.sort()
 
-for v in l1 where v <= C {
-    ans += upper_bound(C-v)
-}
-
+l1.forEach{ans+=upper_bound(C-$0)}
 print(ans)
 
 func upper_bound(_ key: Int) -> Int {
