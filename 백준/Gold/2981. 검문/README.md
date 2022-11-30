@@ -1,4 +1,4 @@
-# [Gold V] 검문 - 2981 
+# [Gold IV] 검문 - 2981 
 
 [문제 링크](https://www.acmicpc.net/problem/2981) 
 
