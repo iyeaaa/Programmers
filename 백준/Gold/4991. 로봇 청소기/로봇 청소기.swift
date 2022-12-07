@@ -1,5 +1,5 @@
 
-// T.C: O(400*10*5) < 1e8
+// T.C: O(400*1024*5) < 1e8
 
 let INF = 9999, dy=[-1,0,1,0], dx=[0,1,0,-1]
 var ans = ""
@@ -9,7 +9,7 @@ while true {
     if ip == [0, 0] { break }
     let (m, n) = (ip[0], ip[1]), ALL_VISIT: Int
     var g = [[Character]]()
-    var v = (0..<n).map{_ in (0..<m).map{_ in (0..<1<<10).map{_ in INF}}}
+    var v = Array(repeating: Array(repeating: Array(repeating: INF, count: 1<<10), count: m), count: n)
     var dust = (0..<n).map{_ in (0..<m).map{_ in 0}}
     var q = [(Int, Int, Int)](), idx = 0
     var rtn = -1
