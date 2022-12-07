@@ -4,11 +4,7 @@ var cnt = 1
 var sum = 64
 var cur = 64
 
-while true {
-    if sum == X {
-        print(cnt)
-        break
-    }
+while sum != X {
     sum -= cur; cnt -= 1
     if sum + cur/2 >= X {
         cur /= 2
@@ -20,3 +16,5 @@ while true {
         cnt += 2
     }
 }
+
+print(cnt)
