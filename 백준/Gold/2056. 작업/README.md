@@ -1,10 +1,10 @@
-# [Gold V] 작업 - 2056 
+# [Gold IV] 작업 - 2056 
 
 [문제 링크](https://www.acmicpc.net/problem/2056) 
 
 ### 성능 요약
 
-메모리: 76976 KB, 시간: 244 ms
+메모리: 74492 KB, 시간: 228 ms
 
 ### 분류
 

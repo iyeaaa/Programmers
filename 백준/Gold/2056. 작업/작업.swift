@@ -1,19 +1,19 @@
+
 let N = Int(readLine()!)!
-var graph = Array(repeating: [0], count: N+1)
-var time = [Int](repeating: 0, count: N+1)
-var dp = [Int](repeating: 0, count: N+1)
+var parent = [[Int]](repeating: [], count: N+1)
+var t = [Int](repeating: 0, count: N+1)
+var dp = [Int](repeating: -1, count: N+1)
 
 for i in 1...N {
-    let input = readLine()!.split{$0==" "}.map{Int(String($0))!}
-    time[i] = input[0]
-    for j in 1..<input.count {
-        graph[i].append(input[j])
-    }
+    let ip = readLine()!.split{$0==" "}.map{Int(String($0))!}
+    t[i] = ip[0]
+    if ip[1] == 0 { dp[i] = t[i]; continue }
+    parent[i] = ip[2...].map{Int($0)}
 }
 
 for i in 1...N {
-    for prnt in graph[i] {
-        dp[i] = max(dp[prnt] + time[i], dp[i])
+    for p in parent[i] {
+        dp[i] = max(dp[i], dp[p]+t[i])
     }
 }
 
