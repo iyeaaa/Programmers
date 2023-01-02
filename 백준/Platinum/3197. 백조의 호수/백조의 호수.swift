@@ -71,7 +71,6 @@ for time in 0... {
             let ny = y+dy[i], nx = x+dx[i]
             if !isRange(ny, nx) || g[ny][nx] != "X" { continue }
             melt.append((ny, nx))
-            uf.uni(key((y, x)), key((ny, nx)))
             g[ny][nx] = "."
         }
     }
