@@ -1,27 +1,18 @@
 
-@discardableResult
-func f(_ digit: Int, _ remainder: Int, _ isFive: Int) -> Int {
-    if digit == N {
-        if remainder == 0 && isFive == 1 {
-            ans += 1
-            return 1
-        }
-        return 0
+let FIVE = 1, ONE = 0, MOD = 1_000_000_007
+let N = Int(readLine()!)!
+var dp = [[[Int]]](repeating:[[Int]](repeating:[Int](repeating:0,count:2),count:3),count:N+1)
+
+dp[1][1][ONE] = 1
+dp[1][2][FIVE] = 1
+
+for i in 1..<N {
+    for j in 0...2 {
+        dp[i+1][(j+1)%3][ONE] = (dp[i+1][(j+1)%3][ONE] + dp[i][j][ONE]) % MOD
+        dp[i+1][(j+1)%3][ONE] = (dp[i+1][(j+1)%3][ONE] + dp[i][j][FIVE]) % MOD
+        dp[i+1][(j+5)%3][FIVE] = (dp[i+1][(j+5)%3][FIVE] + dp[i][j][ONE]) % MOD
+        dp[i+1][(j+5)%3][FIVE] = (dp[i+1][(j+5)%3][FIVE] + dp[i][j][FIVE]) % MOD
     }
-    if dp[digit][remainder][isFive] != -1 {
-        ans += dp[digit][remainder][isFive]
-        return dp[digit][remainder][isFive]
-    }
-    var temp = f(digit+1, (remainder+1)%3, 0)
-    temp = (temp + f(digit+1, (remainder+5)%3, 1) % MOD)
-    dp[digit][remainder][isFive] = temp
-    return temp
 }
 
-let MOD = 1_000_000_007
-let N = Int(readLine()!)!
-var dp = [[[Int]]](repeating: [[Int]](repeating: [Int](repeating: -1, count: 2), count: 15), count: N+1)
-var ans = 0
-
-f(0, 0, 0)
-print(ans % MOD)
+print(dp[N][0][FIVE])
