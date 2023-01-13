@@ -15,16 +15,12 @@ int main() {
 
     for (int i=1;; i++) {
         if (k-len <= 0) {
-            ll s = pow(10, i-1);
-            ll e = s*10;
-            for (int j=s; j<min(N+1,e); j++) {
-                if (k-i <= 0) {
-                    cout << to_string(j)[k-1];
-                    return 0;
-                }
-                k -= i;
+            ll nb = pow(10, i-1) + (k%i==0 ? k/i-1 : k/i);
+            if (nb > N) {
+                cout << -1;
+            } else {
+                cout << to_string(nb)[--k % i];
             }
-            cout << -1;
             return 0;
         } else {
             k -= len;
