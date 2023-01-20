@@ -8,18 +8,16 @@ int n;
 
 int solution(vector<int> money) {
     n = money.size();
-    
+
     dp1[0] = money[0];
-    dp1[2] = money[0] + money[2];
-    
+    dp1[1] = money[0];
     dp2[1] = money[1];
-    dp2[2] = money[2];
-    
-    for (int i=3; i<n-1; i++)
-        dp1[i] = max(dp1[i-3], dp1[i-2]) + money[i];
-    
-    for (int i=3; i<n; i++)
-        dp2[i] = max(dp2[i-3], dp2[i-2]) + money[i];
-    
-    return max(*max_element(dp1,dp1+MAX), *max_element(dp2,dp2+MAX));
+
+    for (int i=2; i<n-1; i++)
+        dp1[i] = max(dp1[i-2] + money[i], dp1[i-1]);
+
+    for (int i=2; i<n; i++)
+        dp2[i] = max(dp2[i-2] + money[i], dp2[i-1]);
+
+    return max(dp1[n-2], dp2[n-1]);
 }
