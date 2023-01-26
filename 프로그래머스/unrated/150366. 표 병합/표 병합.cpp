@@ -66,11 +66,7 @@ vector<string> solution(vector<string> commands) {
             }
         } else if (v[0] == "MERGE") {
             int r1 = stoi(v[1]), c1 = stoi(v[2]), r2 = stoi(v[3]), c2 = stoi(v[4]);
-            pii root1 = uf.root({r1, c1}), root2 = uf.root({r2, c2});
-            if (table[root1.f][root1.s].empty())
-                uf.uni({r2, c2}, {r1, c1});
-            else
-                uf.uni({r1, c1}, {r2, c2});
+            uf.uni({r1, c1}, {r2, c2});
         } else if (v[0] == "UNMERGE") {
             int v1 = stoi(v[1]), v2 = stoi(v[2]);
             auto [r, c] = uf.root({v1, v2});
