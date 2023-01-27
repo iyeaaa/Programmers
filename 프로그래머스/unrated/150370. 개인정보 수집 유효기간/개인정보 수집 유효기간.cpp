@@ -19,13 +19,13 @@ vector<int> solution(string todays, vector<string> terms, vector<string> privaci
     for (int i=1; i<= privacies.size(); i++) {
         string s = privacies[i-1];
 
-        int day = -1;
+        int day = 0;
         day += term[s.back()-'A'];
         day += stoi(s.substr(0, 4)) * 12 * 28;
         day += stoi(s.substr(5, 2)) * 28;
         day += stoi(s.substr(8, 2));
 
-        if (day < today)
+        if (day <= today)
             ans.push_back(i);
     }
 
