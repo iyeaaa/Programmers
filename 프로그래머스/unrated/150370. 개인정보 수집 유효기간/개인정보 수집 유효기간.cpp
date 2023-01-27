@@ -1,62 +1,34 @@
 #include <string>
-#include <iostream>
 #include <vector>
-#include <tuple>
-#include <algorithm>
-#include <sstream>
 using namespace std;
-typedef tuple<int, int, int> ti;
 
-int terms[26];
-vector<pair<ti, int>> privacies;
+int today;
+int term[26];
 vector<int> ans;
 
-void change(ti& date) {
-    auto& [y, m, d] = date;
-    if (d % 28 == 0) {
-        m += (d / 28) - 1;
-        d = 28;
-    } else {
-        m += (d / 28);
-        d %= 28;
-    }
-    if (m % 12 == 0) {
-        y += (m / 12) - 1;
-        m = 12;
-    } else {
-        y += m/12;
-        m %= 12;
-    }
-}
+vector<int> solution(string todays, vector<string> terms, vector<string> privacies) {
 
-ti getTuple(string str) {
-    istringstream iss(str);
-    string buffer;
-    ti date = {0, 0, 0};
-    vector<int> rtn;
+    // change to Day
+    today = stoi(todays.substr(0, 4))*12*28 + stoi(todays.substr(5,2))*28 + stoi(todays.substr(8));
 
-    while (getline(iss, buffer, '.'))
-        rtn.push_back(stoi(buffer));
+    // make Term
+    for (string s: terms)
+        term[s.front()-'A'] = stoi(s.substr(2))*28;
 
-    date = {rtn[0], rtn[1], rtn[2]};
-    return date;
-}
+    // change to day and add term
+    for (int i=1; i<= privacies.size(); i++) {
+        string s = privacies[i-1];
 
-vector<int> solution(string ttoday, vector<string> tterms, vector<string> tprivacies) {
-    ti today = getTuple(ttoday);
+        int day = -1;
+        day += term[s.back()-'A'];
+        day += stoi(s.substr(0, 4)) * 12 * 28;
+        day += stoi(s.substr(5, 2)) * 28;
+        day += stoi(s.substr(8, 2));
 
-    for (string v: tterms)
-        terms[v[0]-'A'] = stoi(v.substr(2));
-
-    for (int i=1; i<= tprivacies.size(); i++) {
-        string v = tprivacies[i-1];
-        int term = terms[v.back()-'A'];
-        ti date = getTuple(v.substr(0, 10));
-        get<2>(date) += term*28-1;
-        change(date);
-        if (today > date)
+        if (day < today)
             ans.push_back(i);
     }
 
     return ans;
 }
+
