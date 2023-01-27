@@ -3,30 +3,28 @@
 using namespace std;
 
 int n, m, r, c, k;
+int dx[] = {1, 0, 0, -1}, dy[] = {0, -1, 1, 0};
+string ds = "dlru", s;
 
-string f(int x, int y, string s) {
-    int rmn = k - s.size();
-    int shorts = abs(r-x) + abs(c-y);
-    
-    if (rmn < shorts || rmn%2 != shorts%2)
-        return "impossible";
-    
-    if (s.size() == k)
-        return s;
-    
-    if (rmn == shorts) {
-        if (x < r) return f(x+1, y, s + 'd');
-        if (y > c) return f(x, y-1, s + 'l');
-        if (y < c) return f(x, y+1, s + 'r');
-        return f(x-1, y, s + 'u');
-    }
-        
-    if (x < n) return f(x+1, y, s + 'd');
-    if (y > 1) return f(x, y-1, s + 'l');
-    return f(x, y+1, s + 'r');
+bool isPsb(int x, int y) {
+    return x > 0 && x <= n && y > 0 && y <= m && k >= abs(x-r) + abs(y-c);
 }
 
 string solution(int tn, int tm, int x, int y, int tr, int tc, int tk) {
     n = tn, m = tm, r = tr, c = tc, k = tk;
-    return f(x, y, "");
+    
+    while (k--) {
+        bool isGo = false;
+        for (int i=0; i<4; i++) {
+            int nx = x+dx[i], ny = y+dy[i];
+            if (!isPsb(nx, ny)) continue;
+            x = nx, y = ny, s += ds[i];
+            isGo = true;
+            break;
+        }
+        if (!isGo && k == 0)
+            return "impossible";
+    }
+    
+    return s;
 }
