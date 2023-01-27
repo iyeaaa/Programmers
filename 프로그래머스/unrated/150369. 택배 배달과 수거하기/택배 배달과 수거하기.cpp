@@ -12,9 +12,9 @@ ll ans;
 ll solution(int cap, int N, vector<int> pick, vector<int> dlv) {
     for (int i=N-1; i>=0; i--) {
         
-        int cnt = 0;                   // 걸음 수
-        int& p = pick[i]; p -= tp;     // 수거해야하는 상자 수
-        int& d = dlv[i];  d -= td; // 배달해야하는 상자 수
+        int cnt = 0;                // 걸음 수
+        int p = pick[i]; p -= tp;   // 수거해야하는 상자 수
+        int d = dlv[i];  d -= td;   // 배달해야하는 상자 수
         
         tp = td = 0;
         
