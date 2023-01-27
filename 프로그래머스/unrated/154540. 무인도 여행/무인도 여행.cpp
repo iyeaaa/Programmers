@@ -1,6 +1,5 @@
 #include <string>
 #include <vector>
-#include <queue>
 #include <algorithm>
 using namespace std;
 typedef pair<int, int> pii;
@@ -15,25 +14,16 @@ bool isRange(int y, int x) {
 }
 
 int f(int y, int x) {
-    queue<pii> q;
-    q.push({y, x});
-    v[y][x] = 0;
-    int rtn = maps[y][x] - '0';
-    
-    while (!q.empty()) {
-        auto [y, x] = q.front(); q.pop();
-        for (int i=0; i<4; i++) {
-            int ny = y+dy[i], nx = x+dx[i];
-            if (!isRange(ny, nx)) continue;
-            if (maps[ny][nx] == 'X') continue;
-            if (v[ny][nx] != -1) continue;
-            q.push({ny, nx});
-            v[ny][nx] = 1;
-            rtn += maps[ny][nx] - '0';
-        }
+    int sum = maps[y][x] - '0';
+    for (int i=0; i<4; i++) {
+        int ny = y+dy[i], nx = x+dx[i];
+        if (!isRange(ny, nx)) continue;
+        if (maps[ny][nx] == 'X') continue;
+        if (v[ny][nx] != -1) continue;
+        v[ny][nx] = true;
+        sum += f(ny, nx);
     }
-    
-    return rtn;
+    return sum;
 }
 
 vector<int> solution(vector<string> tmaps) {
@@ -45,6 +35,7 @@ vector<int> solution(vector<string> tmaps) {
         for (int j=0; j<m; j++) {
             if (maps[i][j] == 'X') continue;
             if (v[i][j] != -1) continue;
+            v[i][j] = true;
             ans.push_back(f(i, j));
         }
     }
