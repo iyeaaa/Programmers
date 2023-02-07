@@ -5,9 +5,9 @@ using namespace std;
 
 vector<int> g[100'101];
 vector<int> result;
+vector<int> v(100'001, -1);
 
-int f(int s, int e, int n) {
-    vector<int> v(n+1, -1);
+void f(int s, int n) {
     v[s] = 0;
     
     queue<int> q;
@@ -15,14 +15,11 @@ int f(int s, int e, int n) {
     
     while (!q.empty()) {
         int cur = q.front(); q.pop();
-        if (cur == e) break;
         for (auto& nxt: g[cur]) if (v[nxt] == -1) {
             q.push(nxt);
             v[nxt] = v[cur] + 1;
         }
     }
-    
-    return v[e];
 }
 
 vector<int> solution(int n, vector<vector<int>> roads, vector<int> sources, int destination) {
@@ -30,8 +27,10 @@ vector<int> solution(int n, vector<vector<int>> roads, vector<int> sources, int 
         g[v[0]].push_back(v[1]),
         g[v[1]].push_back(v[0]);
     
-    for (auto& v: sources)
-        result.push_back(f(v, destination, n));
+    f(destination, n);
+    
+    for (auto& e: sources)
+        result.push_back(v[e]);
     
     return result;
 }
