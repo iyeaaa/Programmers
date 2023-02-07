@@ -1,24 +1,21 @@
 #include <string>
 #include <vector>
-#include <unordered_set>
+#include <unordered_map>
 using namespace std;
 
-int cnt[10001];
-unordered_set<int> chulsoo;
-int brother;
 int result;
+unordered_map<int,int> m1, m2;
 
 int solution(vector<int> topping) {
-    for (auto& v: topping)
-        if (cnt[v]++ == 0)
-            brother++;
+    for (int v: topping)
+        m2[v]++;
     
-    for (auto& v: topping) {
-        chulsoo.insert(v);
-        if (--cnt[v] == 0)
-            brother--;
+    for (int v: topping) {
+        m1[v]++;
+        if (--m2[v] == 0)
+            m2.erase(v);
         
-        if (brother == chulsoo.size())
+        if (m1.size() == m2.size())
             result++;
     }
     
