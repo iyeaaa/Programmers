@@ -9,15 +9,10 @@ unordered_set<int> s;
 int solution(vector<int> elements) {
     N = elements.size();
     
-    for (int len=1; len<=N; len++) {
+    for (int i=0; i<N; i++) {
         int sum = 0;
-        for (int i=0; i<len; i++)
-            sum += elements[i];
-        
-        s.insert(sum);
-        for (int i=0, j=len; i<N; i++,j++) {
+        for (int j=i; j<i+N; j++) {
             sum += elements[j%N];
-            sum -= elements[(j-len)%N];
             s.insert(sum);
         }
     }
