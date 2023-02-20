@@ -7,7 +7,7 @@ typedef pair<int, int> pi;
 
 int result;
 vector<int> tree[18];
-bool v[18][(1<<17)+1];
+bool v[18][1<<17];
 queue<pi> q;
 
 pi findCnt(int info, const vector<int>& isWolf) {
