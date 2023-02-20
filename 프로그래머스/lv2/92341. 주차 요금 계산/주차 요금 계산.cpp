@@ -12,14 +12,10 @@ map<string, int> parking;
 map<string, int> time_sum;
 vector<int> result;
 
-int divide(int x, int y) {
-    return x%y == 0 ? x/y : x/y+1;
-}
-
 int price(int time) {
     if (time <= base_time)
         return base_fee;
-    return base_fee + divide((time - base_time), unit_time) * unit_fee;
+    return base_fee + (time-base_time+unit_time-1)/unit_time * unit_fee;
 }
 
 vector<int> solution(vector<int> fees, vector<string> records) {
