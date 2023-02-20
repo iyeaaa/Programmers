@@ -13,14 +13,10 @@ queue<pi> q;
 pi findCnt(int info, const vector<int>& isWolf) {
     int sheep = 0;
     int wolf = 0;
-    string bn;
     
-    while (info > 0)
-        bn += info%2, info/=2;
-            
-    for (int i=bn.size()-1; i>=0; i--)
-        if (isWolf[i]) wolf += bn[i];
-        else sheep += bn[i];
+    for (int i=0; i<17; i++)
+        if (isWolf[i]) wolf += (info & (1<<i)) > 0;
+        else sheep += (info & (1<<i)) > 0;
     
     return {sheep, wolf};
 }
