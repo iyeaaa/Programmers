@@ -32,7 +32,7 @@ int findScoreDiff() {
     return lianScore - peachScore;
 }
 
-// O(10Hn)
+// O(11Hn)
 void C(int idx, int save) {
     if (idx == 11) {
         int scoreDiff = findScoreDiff();
