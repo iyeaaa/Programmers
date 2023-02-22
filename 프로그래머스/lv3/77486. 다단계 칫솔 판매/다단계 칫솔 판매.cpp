@@ -14,9 +14,6 @@ void f(const string& cur) {
     for (int v: amount[cur])
         last[cur].push_back(v);
     
-    if (tree[cur].empty())
-        return;
-    
     for (const string& nxt: tree[cur]) {
         f(nxt);
         for (int v: last[nxt])
