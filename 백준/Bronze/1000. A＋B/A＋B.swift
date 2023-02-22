@@ -1,1 +1,0 @@
-print(readLine()!.split{$0==" "}.map{Int(String($0))!}.reduce(0){$0+$1})
