@@ -15,17 +15,6 @@ bool cmp(const vector<string>& a, const vector<string>& b) {
     return stoi(a[4]) < stoi(b[4]);
 }
 
-vector<string> split(const string& s, char d) {
-    vector<string> rtn;
-    istringstream ss(s);
-    string buffer;
-
-    while (getline(ss, buffer, d))
-        rtn.push_back(buffer);
-
-    return rtn;
-}
-
 void C(string cur, int idx, int score, const vector<string>& q) {
     if (idx == 4) {
         info[cur].push_back(score);
@@ -38,8 +27,13 @@ void C(string cur, int idx, int score, const vector<string>& q) {
 vector<int> solution(vector<string> in, vector<string> query) {
     n = in.size();
 
-    for (const string& v: in)
-        infovector.push_back(split(v, ' '));
+    for (const string& v: in) {
+        istringstream ss(v);
+        vector<string> temp(5);
+        ss >> temp[0] >> temp[1] >> temp[2] >> temp[3] >> temp[4];
+        
+        infovector.push_back(temp);
+    }
 
     sort(infovector.begin(), infovector.end(), cmp);
 
@@ -49,9 +43,15 @@ vector<int> solution(vector<string> in, vector<string> query) {
     }
 
     for (const string& v: query) {
-        vector<string> temp = split(v, ' ');
-        string key = temp[0] + temp[2] + temp[4] + temp[6];
-        int value = stoi(temp[7]);
+        vector<string> temp(5);
+        string k;
+        istringstream ss(v);
+        int value = 0;
+        
+        ss >> temp[0] >> k >> temp[1] >> k >> temp[2] >> k >> temp[3];
+        ss >> value;
+        
+        string key = temp[0] + temp[1] + temp[2] + temp[3];
 
         auto l = lower_bound(info[key].begin(), info[key].end(), value) - info[key].begin();
         answer.push_back(info[key].size() - l);
