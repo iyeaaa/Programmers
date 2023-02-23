@@ -11,10 +11,6 @@ vector<vector<string>> infovector;
 int n;
 vector<int> answer;
 
-bool cmp(const vector<string>& a, const vector<string>& b) {
-    return stoi(a[4]) < stoi(b[4]);
-}
-
 void C(string cur, int idx, int score, const vector<string>& q) {
     if (idx == 4) {
         info[cur].push_back(score);
@@ -29,18 +25,14 @@ vector<int> solution(vector<string> in, vector<string> query) {
 
     for (const string& v: in) {
         istringstream ss(v);
-        vector<string> temp(5);
-        ss >> temp[0] >> temp[1] >> temp[2] >> temp[3] >> temp[4];
-        
-        infovector.push_back(temp);
-    }
-
-    sort(infovector.begin(), infovector.end(), cmp);
-
-    for (const vector<string>& temp: infovector) {
-        int score = stoi(temp[4]);
+        vector<string> temp(4);
+        int score = 0;
+        ss >> temp[0] >> temp[1] >> temp[2] >> temp[3] >> score;
         C("", 0, score, temp);
     }
+
+    for (auto& [k, v]: info)
+        sort(v.begin(), v.end());
 
     for (const string& v: query) {
         vector<string> temp(5);
