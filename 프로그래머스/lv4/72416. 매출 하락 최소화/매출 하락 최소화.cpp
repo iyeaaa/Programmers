@@ -7,37 +7,30 @@ typedef vector<int> vi;
 
 vi sales;
 vi tree[300'001];
-int dp[300001][2];
+long long dp[300001][2];
+long long INF = 0x7fffffff7fffffff;
 int n;
 
-int f(int cur, bool attend) {
-    if (tree[cur].empty())
-        return attend ? sales[cur] : 0;
-    
-    if (dp[cur][attend] != -1)
-        return dp[cur][attend];
-    
-    int take;
-    
-    if (attend) {
-        take = sales[cur];
-        for (int nxt: tree[cur])
-            take += min(f(nxt, false), f(nxt, true));
-    } else {
-        take = 0;
-        bool allAbsence = true;
-        int mnDiff = 99999999;
-        for (int nxt: tree[cur]) {
-            if (f(nxt, false) > f(nxt, true))
-                allAbsence = false;
-            take += min(f(nxt, false), f(nxt, true));
-            mnDiff = min(mnDiff, f(nxt, true) - f(nxt, false));
-        }
-        if (allAbsence)
-            take += mnDiff;
+void f(int cur) {
+    if (tree[cur].empty()) {
+        dp[cur][0] = 0;
+        dp[cur][1] = sales[cur];
+        return;
     }
     
-    return dp[cur][attend] = take;
+    int take = 0;
+    long long mindiff = INF;
+    
+    for (int nxt: tree[cur]) {
+        f(nxt);
+        take += min(dp[nxt][0], dp[nxt][1]);
+        mindiff = min(mindiff, dp[nxt][1] - dp[nxt][0]);
+    }
+    
+    dp[cur][0] = take + max(0ll, mindiff);
+    dp[cur][1] = take + sales[cur];
+    
+    return;
 }
 
 int solution(vector<int> ts, vector<vector<int>> links) {
@@ -49,5 +42,7 @@ int solution(vector<int> ts, vector<vector<int>> links) {
     for (const auto& link: links)
         tree[link[0]].push_back(link[1]);
     
-    return min(f(1, false), f(1, true));
+    f(1);
+    
+    return min(dp[1][0], dp[1][1]);
 }
