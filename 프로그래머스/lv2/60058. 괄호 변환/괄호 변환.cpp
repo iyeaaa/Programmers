@@ -1,6 +1,5 @@
 #include <string>
 #include <vector>
-#include <iostream>
 using namespace std;
 
 bool isRight(const string& s) {
@@ -17,7 +16,7 @@ string solution(string w) {
     if (w.empty())
         return "";
 
-    string u = "", v = "";
+    string u, v;
 
     int lo = 0, hi = 0;
 
