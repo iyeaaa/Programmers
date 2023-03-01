@@ -12,7 +12,7 @@ vector<int> solution(vector<string> keymap, vector<string> targets) {
             int mnCnt = 99999999;
             for (string k: keymap) {
                 int pos = k.find(c);
-                mnCnt = min(mnCnt, pos == string::npos ? 999999 : pos+1);
+                mnCnt = min(mnCnt, pos == -1 ? 999999 : pos+1);
             }
             cnt += mnCnt;
         }
