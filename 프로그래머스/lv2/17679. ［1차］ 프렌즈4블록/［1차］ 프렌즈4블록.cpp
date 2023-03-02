@@ -7,12 +7,13 @@ vector<string> g;
 
 void fall() {
     for (int i=m-2; i>=0; i--) for (int j=n-1; j>=0; j--) {
-        if (isalpha(g[i][j]) && g[i+1][j] == '.') {
+        if (isalpha(g[i][j])) {
             int ni = i;
             while (ni+1 < m && g[ni+1][j] == '.')
                 ni++;
-            g[ni][j] = g[i][j];
+            int temp = g[i][j];
             g[i][j] = '.';
+            g[ni][j] = temp;
         }
     }
 }
