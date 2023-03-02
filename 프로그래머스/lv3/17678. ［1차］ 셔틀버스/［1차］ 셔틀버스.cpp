@@ -1,11 +1,6 @@
 #include <bits/stdc++.h>
 #define all(x) (x).begin(), (x).end()
 using namespace std;
-typedef pair<int, int> pii;
-typedef priority_queue<pii, vector<pii>, greater<pii>> pq;
-
-int cnt = 0;
-int n, m, t;
 
 string i2s(int v) {
     string h = to_string(v/60);
@@ -20,39 +15,28 @@ string i2s(int v) {
     return h + ':' + m;
 }
 
-bool psb(pair<int, int> x, pq q) {
-    q.push(x);
-    
-    for (int i=0; i<n; i++) {
-        int arrive = i * t + 9 * 60;
-        int cnt = m;
-        while (!q.empty() && cnt > 0 && q.top().first <= arrive) {
-            if (q.top().second)
-                return true;
-            q.pop();
-            cnt--;
-        }
-    }
-    
-    return false;
-}
-
-string solution(int tn, int tt, int tm, vector<string> timetable) {
-    n = tn, t = tt, m = tm;
-    pq q;
+string solution(int n, int t, int m, vector<string> timetable) {
+    priority_queue<int, vector<int>, greater<int>> q;
     
     for (const string& timetable : timetable) {
         int t = stoi(timetable.substr(0,2)) * 60;
         t += stoi(timetable.substr(3));
-        q.push({t, false});
+        q.push(t);
     }
     
-    int lo = -1, hi = 23*60 + 51;
-    while (lo + 1 < hi) {
-        int mid = (lo + hi) >> 1;
-        if (psb({mid, true}, q)) lo = mid;
-        else hi = mid;
+    for (int i=0; i<n; i++) {
+        int cnt = m;
+        int arrive = i*t + 9*60;
+        int last = 0;
+        
+        while (!q.empty() && cnt > 0 && q.top() <= arrive)
+            last = q.top(), q.pop(), cnt--;
+        
+        if (i == n-1) {
+            if (cnt > 0) return i2s(i*t + 9*60);
+            else return i2s(last-1);
+        }
     }
     
-    return i2s(lo);
+    return i2s(q.top());
 }
