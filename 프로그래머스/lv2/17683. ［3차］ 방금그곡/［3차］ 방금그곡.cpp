@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#define all(x) (x).begin(), (x).end()
 using namespace std;
 
 vector<tuple<int, int, string>> candidate;
@@ -37,9 +38,7 @@ string solution(string m, vector<string> musicinfos) {
             candidate.push_back({-time, i, title});
         
         cout << melody << '\n';
-    
-        sort(candidate.begin(), candidate.end());
     }
     
-    return candidate.empty() ? "(None)" : get<2>(candidate.front());
+    return candidate.empty() ? "(None)" : get<2>(*min_element(all(candidate)));
 }
