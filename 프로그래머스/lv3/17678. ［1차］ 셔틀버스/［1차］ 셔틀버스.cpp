@@ -47,9 +47,12 @@ string solution(int tn, int tt, int tm, vector<string> timetable) {
         q.push({t, false});
     }
     
-    for (int i=23*60+59; i>=0; i--)
-        if (psb({i, true}, q))
-            return i2s(i);
+    int lo = -1, hi = 23*60 + 51;
+    while (lo + 1 < hi) {
+        int mid = (lo + hi) >> 1;
+        if (psb({mid, true}, q)) lo = mid;
+        else hi = mid;
+    }
     
-    return "fail";
+    return i2s(lo);
 }
