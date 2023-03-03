@@ -16,10 +16,9 @@ string solution(int n, int t, int m, int p) {
     while (buf.size() < t*m) {
         string two;
         int temp = j++;
-        while (true) {
+        do {
             two += out[temp % n], temp /= n;
-            if (temp == 0) break;
-        }
+        } while (temp > 0);
         reverse(two.begin(), two.end());
         buf += two;
     }
